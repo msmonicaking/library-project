@@ -7,13 +7,8 @@ const app = express();
 
 // anytime we get a get method toward the passed URL, it will run this route
 app.get("/getbooks", async(request, response) => {
-    console.log("get books");
+    response.send("books!");
 
-    try {
-        const book = await db.query(
-            //
-        )
-    }
 });
 
 // sets port to value defined in .env file
