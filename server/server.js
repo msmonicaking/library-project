@@ -1,15 +1,27 @@
 require('dotenv').config();
-console.log(process.env); // remove this after you've confirmed it working
-
+const { response } = require('express');
 const express = require("express");
-
 const app = express();
 
-// anytime we get a get method toward the passed URL, it will run this route
-app.get("/getbooks", async(request, response) => {
-    response.send("books!");
 
+
+// get all users
+app.get("/api/users", async(request, response) => {
+    response.send("get users");
 });
+
+// create new user
+app.post("/api/users", async(req, res) => {
+    response.send("create new user");
+});
+
+// get a user
+app.get("/api/users/:id", async(request, response) => {
+    response.send("get a user");
+});
+
+
+
 
 // sets port to value defined in .env file
 const port = process.env.PORT || 3003;
