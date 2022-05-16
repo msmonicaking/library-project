@@ -6,17 +6,18 @@ const app = express();
 
 
 // get all users
-app.get("/api/users", async(request, response) => {
+app.get("/api/users", async(req, res) => {
     response.send("get users");
 });
 
-// create new user
+// create a user
 app.post("/api/users", async(req, res) => {
-    response.send("create new user");
+    response.send("create a user");
 });
 
 // get a user
-app.get("/api/users/:id", async(request, response) => {
+app.get("/api/users/:id", async(req, res) => {
+    console.log(req);
     response.send("get a user");
 });
 
