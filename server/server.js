@@ -15,8 +15,21 @@ app.use(express.json());
 
 // get all users
 app.get("/api/users/", async(req, res) => {
-    response.send("get users");
-    const results = await db.query("select * from user");
+    try {
+        const results = await db.query("SELECT * FROM user");
+
+        console.log(results);
+        res.status(200).json({
+            status: "success",
+            results: results.rows.length,
+            data: {
+                user: results[rows]
+            },
+        });
+
+    } catch(err) {
+        console.log(err);
+    }
 });
 
 // create a user
