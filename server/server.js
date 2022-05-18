@@ -3,7 +3,9 @@ require("dotenv").config();
 const { response } = require('express');
 
 const express = require("express"); // middleware
-const morgan = require('morgan'); // 3rd party middleware
+const morgan = require("morgan"); // 3rd party middleware
+const db = require("./db");
+
 const app = express();
 
 // middleware
@@ -13,6 +15,7 @@ app.use(express.json());
 // get all users
 app.get("/api/users/", async(req, res) => {
     response.send("get users");
+    db.query("select * from user");
 });
 
 // create a user
