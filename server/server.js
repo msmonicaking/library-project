@@ -11,11 +11,12 @@ const app = express();
 // middleware
 app.use(express.json());
 
+//--------------------------------------------------------------
 
 // get all users
 app.get("/api/users/", async(req, res) => {
     response.send("get users");
-    db.query("select * from user");
+    const results = await db.query("select * from user");
 });
 
 // create a user
@@ -39,9 +40,7 @@ app.put("/api/users/:id", async(req, res) => {
     console.log(req.params.id);
 });
 
-
-
-
+//--------------------------------------------------------------
 
 // get all books
 app.get("/api/books/", async(req, res) => {
@@ -69,7 +68,7 @@ app.get("/api/books/:id", async(req, res) => {
 });
 
 
-
+//--------------------------------------------------------------
 
 // return all checkouts
 app.get("/api/orders/", async(req, res) => {
@@ -81,7 +80,7 @@ app.get("/api/orders/:id", async(req, res) => {
     response.send("update a checkout");
 });
 
-
+//--------------------------------------------------------------
 
 
 // sets port to value defined in .env file
