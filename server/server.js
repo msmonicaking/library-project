@@ -3,16 +3,33 @@ require("dotenv").config();
 const { response } = require('express');
 
 const express = require("express"); // middleware
-const morgan = require('morgan'); // 3rd party middleware
+const morgan = require("morgan"); // 3rd party middleware
+const db = require("./db");
+
 const app = express();
 
 // middleware
 app.use(express.json());
 
+//--------------------------------------------------------------
 
 // get all users
 app.get("/api/users/", async(req, res) => {
-    response.send("get users");
+    try {
+        const results = await db.query("SELECT * FROM user");
+
+        console.log(results);
+        res.status(200).json({
+            status: "success",
+            results: results.rows.length,
+            data: {
+                user: results[rows]
+            },
+        });
+
+    } catch(err) {
+        console.log(err);
+    }
 });
 
 // create a user
@@ -36,9 +53,7 @@ app.put("/api/users/:id", async(req, res) => {
     console.log(req.params.id);
 });
 
-
-
-
+//--------------------------------------------------------------
 
 // get all books
 app.get("/api/books/", async(req, res) => {
@@ -66,7 +81,7 @@ app.get("/api/books/:id", async(req, res) => {
 });
 
 
-
+//--------------------------------------------------------------
 
 // return all checkouts
 app.get("/api/orders/", async(req, res) => {
@@ -78,7 +93,7 @@ app.get("/api/orders/:id", async(req, res) => {
     response.send("update a checkout");
 });
 
-
+//--------------------------------------------------------------
 
 
 // sets port to value defined in .env file
