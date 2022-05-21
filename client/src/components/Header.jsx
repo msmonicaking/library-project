@@ -19,7 +19,9 @@ const Header = () => {
 					Welcome,&nbsp;
 					<a href="/editUser">UserName</a>
 				</p>
-				<button className="btn btn-danger">Log out</button>
+				<Link to={"/"}>
+					<button className="btn btn-danger">Log out</button>
+				</Link>
 			</div>
 		</div>
 	);
