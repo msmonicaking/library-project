@@ -108,7 +108,7 @@ const Table = () => {
 
 	const [curPage, setCurPage] = useState(1);
 	return (
-		<>
+		<div className="mt-4">
 			<table className="table" style={{ width: "80%", margin: "auto" }}>
 				<thead>
 					<tr>
@@ -173,7 +173,7 @@ const Table = () => {
 					</li>
 				</ul>
 			</nav>
-		</>
+		</div>
 	);
 };
 

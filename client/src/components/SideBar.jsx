@@ -3,11 +3,11 @@ import React from "react";
 const SideBar = () => {
 	return (
 		<div
-			className="d-flex flex-column justify-content-between"
+			className="d-flex flex-column justify-content-between bg-dark"
 			style={{
 				height: "75vh",
 				width: "20vw",
-				backgroundColor: "navy",
+				// backgroundColor: "navy",
 				color: "whitesmoke",
 			}}
 		>

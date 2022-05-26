@@ -7,9 +7,9 @@ const Index = () => {
   return (
     <div className='text-center'>
       <Header></Header>
-      <div className='d-flex'>
+      <div className='d-flex bg-light'>
         <SideBar></SideBar>
-        <div style={{width:'80vw'}}>
+        <div style={{width:'80vw'}} className='bg-light'>
           <SearchBar></SearchBar>
           <Table></Table>
         </div>

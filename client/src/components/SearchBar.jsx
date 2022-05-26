@@ -3,7 +3,7 @@ import React from "react";
 const SearchBar = () => {
 	return (
 		<div>
-			<nav className="navbar bg-light">
+			<nav className="navbar">
 				<div className="container-fluid">
 					<form className="d-flex" role="search" style={{ margin: "auto" }}>
 						<input

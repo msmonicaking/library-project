@@ -4,7 +4,7 @@ const Header = () => {
 	return (
 		<div
 			className="d-flex justify-content-around align-items-center"
-			style={{ height: "20vh", width: "100vw", backgroundColor: "orange" }}
+			style={{ height: "20vh", width: "100vw", backgroundColor:'#AAAAAA' }}
 		>
 			<img
 				src="https://thumbs.dreamstime.com/b/composite-image-slices-fruits-mango-kiwi-isolated-white-background-healthy-eating-concept-composite-image-161192866.jpg"
@@ -12,10 +12,10 @@ const Header = () => {
 				style={{ width: "100px" }}
 			/>
 
-			<h1>MongoKiwi Ebook Library</h1>
+			<h1 className="text-light">MongoKiwi Ebook Library</h1>
 
 			<div>
-				<p>
+				<p className="text-light">
 					Welcome,&nbsp;
 					<a href="/editUser">UserName</a>
 				</p>
