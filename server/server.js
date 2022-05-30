@@ -55,7 +55,7 @@ app.post("/api/users/", async(req, res) => {
     }catch(err) {
         console.log(err);
     }
-    // response.send("create a user");
+    response.send("create a user");
 });
 
 // GET get USER with ID
@@ -108,6 +108,7 @@ app.put("/api/users/:id", async(req, res) => {
 
 // mark a user as deleted
 // I HAVE MODIFIED THE ROUTE
+// done
 app.put("/api/users/deleted/:id", async(req, res) => {
     try{
         const results = db.query("UPDATE useraccount SET isdeleted = true WHERE id = $1 returning *",
@@ -126,8 +127,74 @@ app.put("/api/users/deleted/:id", async(req, res) => {
 
 //--------------------------------------------------------------
 
+// add new author
+// done
+app.post("/api/author", async(req, res) => {
+    console.log(req.body);
+
+    try{
+        const results = await db.query(
+            "INSERT INTO author (firstname, lastname) VALUES ($1, $2) returning *",
+            [req.body.firstname, req.body.lastname]
+        );
+        console.log(results);
+        res.status(201).json({
+            status: "success",
+            data:{
+                author: results.rows[0],
+            },
+        });
+    }catch(err) {
+        console.log(err);
+    }
+    // response.send("add new author");
+});
+
+// add new category
+//done
+app.post("/api/category", async(req, res) => {
+    console.log(req.body);
+
+    try{
+        const results = await db.query(
+            "INSERT INTO category (name) VALUES ($1) returning *",
+            [req.body.name]
+        );
+        console.log(results);
+        res.status(201).json({
+            status: "success",
+            data:{
+                category: results.rows[0],
+            },
+        });
+    }catch(err) {
+        console.log(err);
+    }
+    // response.send("add new category");
+});
+
+//--------------------------------------------------------------
+
 // get all books
+// NOT FINISH
 app.get("/api/books/", async(req, res) => {
+    try {
+        const results = await db.query("SELECT * FROM book");
+
+        console.log(results);
+
+        res.status(200).json({
+            status: "success",
+            results: results.rows.length,
+
+            data:{
+                books: results.rows
+            },
+        });
+
+    } catch(err) {
+        console.log(err);
+    }
     response.send("get all books");
 });
 
