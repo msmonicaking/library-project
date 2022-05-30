@@ -14,6 +14,7 @@ app.use(express.json());
 //--------------------------------------------------------------
 
 // get all users
+// done
 app.get("/api/users/", async(req, res) => {
     try {
         const results = await db.query("SELECT * FROM useraccount");
@@ -34,24 +35,92 @@ app.get("/api/users/", async(req, res) => {
     }
 });
 
-// create a user
+// POST create users
+// done
 app.post("/api/users/", async(req, res) => {
-    response.send("create a user");
+    console.log(req.body); // req.body attached due to middleware
+
+    try{
+        const results = await db.query(
+            "INSERT INTO useraccount (firstname, lastname, username, usertypeid, email, phonenumber, isdeleted) VALUES ($1, $2, $3, $4, $5, $6, $7) returning *",
+            [req.body.firstname, req.body.lastname, req.body.username, req.body.usertypeid, req.body.email, req.body.phonenumber, req.body.isdeleted]
+        );
+        console.log(results);
+        res.status(201).json({
+            status: "success",
+            data:{
+                book: results.rows[0],
+            },
+        });
+    }catch(err) {
+        console.log(err);
+    }
+    // response.send("create a user");
 });
 
-// get a user
+// GET get USER with ID
+// done
 app.get("/api/users/:id", async(req, res) => {
-    console.log(req.params.id);
-    response.send("get a user");
+    console.log(`${req.params.id}`);
+    try{
+        const results = await db.query(
+            "SELECT * FROM useraccount where id = $1;",
+            [req.params.id]
+        );
+
+        // console.log(results.rows[0]);
+
+        res.status(200).json({
+            status: "success",
+            data:{
+                user: results.rows[0],
+            },
+        });
+    }catch(err){
+        console.log(err);
+    }
+    // console.log(req.params.id);
+    // response.send("get a user");
 });
 
 // update a user
+// PUT update USER
+// done
 app.put("/api/users/:id", async(req, res) => {
+    try{
+        const results = await db.query(
+            "UPDATE useraccount SET firstname = $1, lastname = $2, email = $3, usertypeid = $4, phonenumber = $5, isdeleted = $6 where id = $7 returning *",
+            [req.body.firstname, req.body.lastname, req.body.email, req.body.usertypeid, req.body.phonenumber, req.body.isdeleted, req.params.id]
+        );
+
+        res.status(200).json({
+            status: "success",
+            data:{
+                book: results.rows[0],
+            },
+        });
+    }catch(err) {
+        console.log(err);
+    }
     console.log(req.params.id);
+    console.log(req.body);
 });
 
 // mark a user as deleted
-app.put("/api/users/:id", async(req, res) => {
+// I HAVE MODIFIED THE ROUTE
+app.put("/api/users/deleted/:id", async(req, res) => {
+    try{
+        const results = db.query("UPDATE useraccount SET isdeleted = true WHERE id = $1 returning *",
+            [req.params.id]);
+
+        res.status(204).json({
+            status: "success",
+        });
+        console.log("deleted");
+    }catch(err) {
+        console.log(err);
+    }
+
     console.log(req.params.id);
 });
 
