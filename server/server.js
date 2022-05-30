@@ -16,14 +16,16 @@ app.use(express.json());
 // get all users
 app.get("/api/users/", async(req, res) => {
     try {
-        const results = await db.query("SELECT * FROM user");
+        const results = await db.query("SELECT * FROM useraccount");
 
         console.log(results);
+
         res.status(200).json({
             status: "success",
             results: results.rows.length,
-            data: {
-                user: results[rows]
+
+            data:{
+                user: results.rows
             },
         });
 
