@@ -41,12 +41,14 @@ app.get("/api/users/", async(req, res) => {
 app.post("/api/users/", async(req, res) => {
     console.log(req.body); // req.body attached due to middleware
 
+    // const{curId} = req.body.usertypeid;
+
     try{
         const results = await db.query(
             "INSERT INTO useraccount (firstname, lastname, username, usertypeid, email, phonenumber, isdeleted) VALUES ($1, $2, $3, $4, $5, $6, $7) returning *",
             [req.body.firstname, req.body.lastname, req.body.username, req.body.usertypeid, req.body.email, req.body.phonenumber, req.body.isdeleted]
         );
-        console.log(results);
+        // console.log(results);
         res.status(201).json({
             status: "success",
             data:{
@@ -56,7 +58,7 @@ app.post("/api/users/", async(req, res) => {
     }catch(err) {
         console.log(err);
     }
-    response.send("create a user");
+    // response.send("create a user");
 });
 
 // GET get USER with ID
@@ -176,6 +178,28 @@ app.post("/api/category", async(req, res) => {
         console.log(err);
     }
     // response.send("add new category");
+});
+
+// add new usertype
+//
+app.post("/api/usertype", async(req, res) => {
+    console.log(req.body);
+
+    try{
+        const results = await db.query(
+            "INSERT INTO usertype (type) VALUES ($1) returning *",
+            [req.body.type]
+        );
+        console.log(results);
+        res.status(201).json({
+            status: "success",
+            data:{
+                author: results.rows[0],
+            },
+        });
+    }catch(err) {
+        console.log(err);
+    }
 });
 
 //--------------------------------------------------------------
