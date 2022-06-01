@@ -9,6 +9,8 @@ const db = require("./db");
 const app = express();
 
 // middleware
+
+app.use(morgan("dev"));
 //app.use(cors());
 
 // takes info in from request and attaches it to body
