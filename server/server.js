@@ -9,7 +9,10 @@ const db = require("./db");
 const app = express();
 
 // middleware
-app.use(express.json());
+//app.use(cors());
+
+// takes info in from request and attaches it to body
+app.use(express.json()); 
 
 //--------------------------------------------------------------
 // USER
@@ -18,7 +21,9 @@ app.use(express.json());
 // done
 app.get("/api/users/", async(req, res) => {
     try {
-        const results = await db.query("SELECT * FROM useraccount");
+        const results = await db.query(
+            "SELECT * FROM useraccount"
+            );
 
         console.log(results);
 
@@ -26,8 +31,8 @@ app.get("/api/users/", async(req, res) => {
             status: "success",
             results: results.rows.length,
 
-            data:{
-                user: results.rows
+            data: {
+                user: results.rows,
             },
         });
 
@@ -55,7 +60,7 @@ app.post("/api/users/", async(req, res) => {
                 book: results.rows[0],
             },
         });
-    }catch(err) {
+    } catch(err) {
         console.log(err);
     }
     // response.send("create a user");
@@ -90,7 +95,7 @@ app.get("/api/users/:id", async(req, res) => {
 // PUT update USER
 // done
 app.put("/api/users/:id", async(req, res) => {
-    try{
+    try {
         const results = await db.query(
             "UPDATE useraccount SET firstname = $1, lastname = $2, email = $3, usertypeid = $4, phonenumber = $5, isdeleted = $6 where id = $7 returning *",
             [req.body.firstname, req.body.lastname, req.body.email, req.body.usertypeid, req.body.phonenumber, req.body.isdeleted, req.params.id]
@@ -102,7 +107,7 @@ app.put("/api/users/:id", async(req, res) => {
                 book: results.rows[0],
             },
         });
-    }catch(err) {
+    } catch(err) {
         console.log(err);
     }
     console.log(req.params.id);
@@ -113,15 +118,17 @@ app.put("/api/users/:id", async(req, res) => {
 // I HAVE MODIFIED THE ROUTE
 // done
 app.put("/api/users/deleted/:id", async(req, res) => {
-    try{
-        const results = db.query("UPDATE useraccount SET isdeleted = true WHERE id = $1 returning *",
-            [req.params.id]);
+    try {
+        const results = db.query(
+            "UPDATE useraccount SET isdeleted = true WHERE id = $1 returning *",
+            [req.params.id]
+            );
 
         res.status(204).json({
             status: "success",
         });
         console.log("deleted");
-    }catch(err) {
+    } catch(err) {
         console.log(err);
     }
 
@@ -259,12 +266,13 @@ app.get("/api/books/:id", async(req, res) => {
 });
 
 // add new book
-// NOT TESTED
+// 
 app.post("/api/books/:id", async(req, res) => {
     console.log(req.body);
     try {
         const results = await db.query(
             "INSERT INTO book (catalogid) VALUES ($1) RETURN *;"
+            [req.body.catalogid]
             );
 
         console.log(results);
@@ -284,32 +292,92 @@ app.post("/api/books/:id", async(req, res) => {
     response.send("add new book");
 });
 
-// update a books info
-app.put("/api/catalogcard/:id", async(req, res) => {
-
-
-
-    response.send("update a book");
-});
-
 // mark a book as deleted
-app.put("/api/books/:id", async(req, res) => {
+app.put("/api/books/deleted/:id", async(req, res) => {
 
+    try {
+        
+        const results = await db.query(
+            "UPDATE book SET isdeleted = false WHERE id = id "
+            );
+        
+        console.log(results);
+
+        res.status(200).json({
+            status: "success",
+            results: results.rows.length,
+
+            data:{
+                books: results.rows
+            },
+        });
+
+    } catch(err) {
+        console.log(err);
+    }
     
     response.send("delete a book");
 });
 
 
 //--------------------------------------------------------------
-// ORDER
+// CHECKOUT
 
-// return all checkouts
-app.get("/api/orders/", async(req, res) => {
-    response.send("get all checkouts");
+// create a checkout
+// check book out case
+app.post("/api/checkout/", async(req, res) => {
+    console.log(req.body);
+
+    try {
+      const results = await db.query(
+        "INSERT INTO checkout (userid, bookid, dateout, returnby, isreturned) VALUES ($1, $2, $3, $4, false)",
+        [req.body.userid, req.body.bookid, req.body.dateout, req.body.returnby]
+      );
+
+      console.log(results);
+      
+      res.status(201).json({
+        status: "success",
+        data: {
+            data:{
+                books: results.rows[0]
+            },
+        },
+      });
+    
+    } catch (err) {
+      console.log(err);
+    }    
+
+    response.send("create a checkout");
 });
 
 // update a checkout
-app.put("/api/orders/:id", async(req, res) => {
+// return book case
+app.put("/api/checkout/", async(req, res) => {
+    console.log(req.body);
+
+    try {
+      const results = await db.query(
+        "UPDATE checkout SET isreturned = true, returndate = $2 WHERE bookid = $1",
+        [req.body.bookid, req.body.returndate]
+      );
+
+      console.log(results);
+      
+      res.status(201).json({
+        status: "success",
+        data: {
+            data:{
+                books: results.rows[0]
+            },
+        },
+      });
+    
+    } catch (err) {
+      console.log(err);
+    }
+
     response.send("update a checkout");
 });
 
@@ -319,6 +387,8 @@ app.put("/api/orders/:id", async(req, res) => {
 
 // get all catalogcard
 app.get("/api/catalogcard/", async(req, res) => {
+
+
     response.send("get all catalogcards");
 });
 
@@ -328,6 +398,7 @@ app.get("/api/catalogcard/", async(req, res) => {
 });
 
 //--------------------------------------------------------------
+// END OF FILE BUSINESS
 
 // sets port to value defined in .env file
 const port = process.env.PORT || 3003;

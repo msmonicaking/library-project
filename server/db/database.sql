@@ -44,7 +44,7 @@ CREATE TABLE usertype(
                          PRIMARY KEY (id)
 );
 
-CREATE TABLE useraccount(
+CREATE TABLE user(
                             id SERIAL,
                             firstname VARCHAR(255) NOT NULL,
                             lastname VARCHAR(255) NOT NULL,
@@ -65,7 +65,7 @@ CREATE TABLE checkout(
                          dateout DATE NOT NULL,
                          returnby DATE NOT NULL,
                          isreturned BOOLEAN NOT NULL,
-                         returndate DATE NOT NULL,
+                         returndate DATE,
 
                          PRIMARY KEY (id),
                          FOREIGN KEY (useraccountid) REFERENCES useraccount(id) DEFERRABLE INITIALLY DEFERRED,
