@@ -44,7 +44,7 @@ CREATE TABLE usertype(
                          PRIMARY KEY (id)
 );
 
-CREATE TABLE user(
+CREATE TABLE useraccount(
                             id SERIAL,
                             firstname VARCHAR(255) NOT NULL,
                             lastname VARCHAR(255) NOT NULL,
