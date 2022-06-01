@@ -30,11 +30,11 @@ CREATE TABLE catalogcard(
 
 CREATE TABLE book(
                      id SERIAL,
-                     catelogid INTEGER,
+                     catalogid INTEGER,
                      isdeleted BOOLEAN NOT NULL,
 
                      PRIMARY KEY (id),
-                     FOREIGN KEY (catelogid) REFERENCES catalogcard(id) DEFERRABLE INITIALLY DEFERRED
+                     FOREIGN KEY (catalogid) REFERENCES catalogcard(id) DEFERRABLE INITIALLY DEFERRED
 );
 
 CREATE TABLE usertype(

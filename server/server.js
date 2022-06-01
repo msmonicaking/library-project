@@ -1,6 +1,6 @@
 require("dotenv").config();
 
-const { response } = require('express');
+const { response } = require("express");
 
 const express = require("express"); // middleware
 const morgan = require("morgan"); // 3rd party middleware
@@ -12,6 +12,7 @@ const app = express();
 app.use(express.json());
 
 //--------------------------------------------------------------
+// USER
 
 // get all users
 // done
@@ -126,6 +127,7 @@ app.put("/api/users/deleted/:id", async(req, res) => {
 });
 
 //--------------------------------------------------------------
+// AUTHOR
 
 // add new author
 // done
@@ -150,12 +152,15 @@ app.post("/api/author", async(req, res) => {
     // response.send("add new author");
 });
 
+//--------------------------------------------------------------
+// CATEGORY
+
 // add new category
 //done
 app.post("/api/category", async(req, res) => {
     console.log(req.body);
 
-    try{
+    try {
         const results = await db.query(
             "INSERT INTO category (name) VALUES ($1) returning *",
             [req.body.name]
@@ -167,19 +172,23 @@ app.post("/api/category", async(req, res) => {
                 category: results.rows[0],
             },
         });
-    }catch(err) {
+    } catch(err) {
         console.log(err);
     }
     // response.send("add new category");
 });
 
 //--------------------------------------------------------------
+// BOOK
 
 // get all books
 // NOT FINISH
 app.get("/api/books/", async(req, res) => {
+    
     try {
-        const results = await db.query("SELECT * FROM book");
+        const results = await db.query(
+            "SELECT * FROM book"
+            );
 
         console.log(results);
 
@@ -199,27 +208,76 @@ app.get("/api/books/", async(req, res) => {
 });
 
 // get a book
+// NOT TESTED
 app.get("/api/books/:id", async(req, res) => {
-    response.send("get a books");
+    console.log(req.body);
+
+    try {
+        const results = await db.query(
+            "SELECT * FROM book WHERE id = book.id"
+            );
+
+        console.log(results);
+
+        res.status(200).json({
+            status: "success",
+            results: results.rows.length,
+
+            data:{
+                books: results.rows
+            },
+        });
+
+    } catch(err) {
+        console.log(err);
+    }
+    response.send("get a book");
 });
 
 // add new book
+// NOT TESTED
 app.post("/api/books/:id", async(req, res) => {
+    console.log(req.body);
+    try {
+        const results = await db.query(
+            "INSERT INTO book (catalogid) VALUES ($1) RETURN *;"
+            );
+
+        console.log(results);
+
+        res.status(200).json({
+            status: "success",
+            results: results.rows.length,
+
+            data:{
+                books: results.rows
+            },
+        });
+
+    } catch(err) {
+        console.log(err);
+    }
     response.send("add new book");
 });
 
 // update a books info
-app.put("/api/books/:id", async(req, res) => {
+app.put("/api/catalogcard/:id", async(req, res) => {
+
+
+
     response.send("update a book");
 });
 
 // mark a book as deleted
-app.get("/api/books/:id", async(req, res) => {
+app.put("/api/books/:id", async(req, res) => {
+
+    
     response.send("delete a book");
 });
 
 
 //--------------------------------------------------------------
+// ORDER
 
 // return all checkouts
 app.get("/api/orders/", async(req, res) => {
@@ -227,12 +285,25 @@ app.get("/api/orders/", async(req, res) => {
 });
 
 // update a checkout
-app.get("/api/orders/:id", async(req, res) => {
+app.put("/api/orders/:id", async(req, res) => {
     response.send("update a checkout");
 });
 
-//--------------------------------------------------------------
 
+//--------------------------------------------------------------
+// CATALOGCARDS
+
+// get all catalogcard
+app.get("/api/catalogcard/", async(req, res) => {
+    response.send("get all catalogcards");
+});
+
+// add new catalogcard
+app.get("/api/catalogcard/", async(req, res) => {
+    response.send("get all catalogcards");
+});
+
+//--------------------------------------------------------------
 
 // sets port to value defined in .env file
 const port = process.env.PORT || 3003;
