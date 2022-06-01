@@ -385,15 +385,52 @@ app.put("/api/checkout/", async(req, res) => {
 //--------------------------------------------------------------
 // CATALOGCARDS
 
-// get all catalogcard
+// retrieve all catalogcards
 app.get("/api/catalogcard/", async(req, res) => {
+    try {
+        const allcards = await db.query(
+            "SELECT * FROM catalogcard"
+            );
+    
+        res.status(200).json({
+          status: "success",
+          results: allcards.rows.length,
+          data: {
+            catalogcard : allcards.rows,
+          },
+        });
 
+      } catch (err) {
+        console.log(err);
+      }
 
     response.send("get all catalogcards");
 });
 
-// add new catalogcard
-app.get("/api/catalogcard/", async(req, res) => {
+// create a catalogcard
+app.post("/api/catalogcard/", async(req, res) => {
+    console.log(req.body);
+
+    try {
+
+      const results = await db.query(
+        "INSERT INTO catalogcard (title, authorid, categoryid, isbn) values ($1, $2, $3, $4) returning *",
+        [req.body.title, req.body.authorid, req.body.categoryid, req.body.isbn]
+      );
+
+      console.log(results);
+      
+      res.status(201).json({
+        status: "succes",
+        data: {
+          restaurant: results.rows[0],
+        },
+      });
+    
+    } catch (err) {
+      console.log(err);
+    }
+
     response.send("get all catalogcards");
 });
 
