@@ -1,10 +1,10 @@
 import React from "react";
 import { Link } from "react-router-dom";
-const Header = () => {
+const Header = (props) => {
 	return (
 		<div
 			className="d-flex justify-content-around align-items-center"
-			style={{ height: "20vh", width: "100vw", backgroundColor:'#AAAAAA' }}
+			style={{ height: "20vh", width: "100vw", backgroundColor: "#AAAAAA" }}
 		>
 			<img
 				src="https://thumbs.dreamstime.com/b/composite-image-slices-fruits-mango-kiwi-isolated-white-background-healthy-eating-concept-composite-image-161192866.jpg"
@@ -17,10 +17,12 @@ const Header = () => {
 			<div>
 				<p className="text-light">
 					Welcome,&nbsp;
-					<a href="/editUser">UserName</a>
+					<a href="/edituser">{props.user.username}</a>
 				</p>
 				<Link to={"/"}>
-					<button className="btn btn-danger">Log out</button>
+					<button className="btn btn-danger">
+						Log out
+					</button>
 				</Link>
 			</div>
 		</div>

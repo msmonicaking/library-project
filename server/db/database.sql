@@ -32,6 +32,7 @@ CREATE TABLE book(
                      id SERIAL,
                      catalogid INTEGER,
                      isdeleted BOOLEAN NOT NULL,
+                     isavaiable BOOLEAN NOT NULL,
 
                      PRIMARY KEY (id),
                      FOREIGN KEY (catalogid) REFERENCES catalogcard(id) DEFERRABLE INITIALLY DEFERRED
@@ -52,6 +53,7 @@ CREATE TABLE useraccount(
                             usertypeid INTEGER NOT NULL,
                             email VARCHAR(255) NOT NULL,
                             phonenumber VARCHAR(255) NOT NULL,
+                            pw VARCHAR(255) NOT NULL,
                             isdeleted boolean NOT NULL DEFAULT false,
 
                             PRIMARY KEY (id),

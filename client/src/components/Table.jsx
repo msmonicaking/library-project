@@ -139,7 +139,7 @@ const Table = () => {
 							style={{ cursor: "pointer" }}
 							onClick={() => handleBackPage()}
 						>
-							<i class="fa-solid fa-angles-left"></i>
+							<i className="fa-solid fa-angles-left"></i>
 						</p>
 					</li>
 					{pages.map((page, idx) => (
@@ -168,7 +168,7 @@ const Table = () => {
 							style={{ cursor: "pointer" }}
 							onClick={() => handleForwardPage()}
 						>
-							<i class="fa-solid fa-angles-right"></i>
+							<i className="fa-solid fa-angles-right"></i>
 						</p>
 					</li>
 				</ul>

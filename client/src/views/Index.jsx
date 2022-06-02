@@ -3,10 +3,10 @@ import Header from '../components/Header'
 import SideBar from '../components/SideBar'
 import SearchBar from '../components/SearchBar'
 import Table from '../components/Table'
-const Index = () => {
+const Index = (props) => {
   return (
     <div className='text-center'>
-      <Header></Header>
+      <Header user={props.user}></Header>
       <div className='d-flex bg-light'>
         <SideBar></SideBar>
         <div style={{width:'80vw'}} className='bg-light'>
