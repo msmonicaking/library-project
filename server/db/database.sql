@@ -30,7 +30,7 @@ CREATE TABLE catalogcard(
 
 CREATE TABLE book(
                      id SERIAL,
-                     catalogid INTEGER,
+                     catalogid INTEGER NOT NULL,
                      isdeleted BOOLEAN NOT NULL,
                      isavaiable BOOLEAN NOT NULL,
 
