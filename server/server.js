@@ -20,7 +20,7 @@ app.use(express.json());
 //--------------------------------------------------------------
 // USER
 
-// get all users
+// get all useraccounts
 // done
 app.get("/api/users/", async (req, res) => {
 	try {
@@ -41,7 +41,7 @@ app.get("/api/users/", async (req, res) => {
 	}
 });
 
-// POST create users
+// POST create a useraccount
 // done
 app.post(
 	"/api/users/",
@@ -52,6 +52,8 @@ app.post(
 
 		try {
 			const results = await db.query(
+				
+				"INSERT INTO usertype (type) VALUES (user)",
 				"INSERT INTO useraccount (firstname, lastname, username, usertypeid, email, phonenumber, isdeleted, pw) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) returning *",
 				[
 					req.body.firstname,
@@ -83,6 +85,7 @@ app.post(
 	}
 	// response.send("create a user");
 );
+
 app.get("/api/users/:email", async (req, res) => {
 	try {
 		const user = await db.query("SELECT * FROM useraccount WHERE email = $1;", [
@@ -98,6 +101,7 @@ app.get("/api/users/:email", async (req, res) => {
 		console.log(err);
 	}
 });
+
 // GET get USER with ID
 // done
 app.get("/api/users/:id", async (req, res) => {
