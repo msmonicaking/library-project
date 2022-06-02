@@ -41,7 +41,7 @@ const Login = (props) => {
 			<div style={{ width: "50%", margin: "auto" }}>
 				<form onSubmit={(e) => handleSubmit(e)}>
 					<div className="mb-3">
-						<label for="email" className="form-label">
+						<label htmlFor="email" className="form-label">
 							Email address
 						</label>
 						<input
@@ -56,7 +56,7 @@ const Login = (props) => {
 						</div>
 					</div>
 					<div className="mb-3">
-						<label for="password" className="form-label">
+						<label htmlFor="password" className="form-label">
 							Password
 						</label>
 						<input

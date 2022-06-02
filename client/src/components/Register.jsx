@@ -48,7 +48,7 @@ const Register = (props) => {
 						We'll never share your infomation with anyone else.
 					</div>
 					<div className="mb-3">
-						<label for="firstname" className="form-label">
+						<label htmlFor="firstname" className="form-label">
 							Firstname*
 						</label>
 						<input
@@ -60,7 +60,7 @@ const Register = (props) => {
 						/>
 					</div>
 					<div className="mb-3">
-						<label for="lastname" className="form-label">
+						<label htmlFor="lastname" className="form-label">
 							Lastname*
 						</label>
 						<input
@@ -72,7 +72,7 @@ const Register = (props) => {
 						/>
 					</div>
 					<div className="mb-3">
-						<label for="username" className="form-label">
+						<label htmlFor="username" className="form-label">
 							Username*
 						</label>
 						<input
@@ -84,7 +84,7 @@ const Register = (props) => {
 						/>
 					</div>
 					<div className="mb-3">
-						<label for="email" className="form-label">
+						<label htmlFor="email" className="form-label">
 							Email address*
 						</label>
 						<input
@@ -96,7 +96,7 @@ const Register = (props) => {
 						/>
 					</div>
 					<div className="mb-3">
-						<label for="phone" className="form-label">
+						<label htmlFor="phone" className="form-label">
 							Phone Number*
 						</label>
 						<input
@@ -108,7 +108,7 @@ const Register = (props) => {
 						/>
 					</div>
 					<div className="mb-3">
-						<label for="password" className="form-label">
+						<label htmlFor="password" className="form-label">
 							Password*
 						</label>
 						<input
