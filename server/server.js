@@ -52,7 +52,6 @@ app.post(
 
 		try {
 			const results = await db.query(
-				
 				"INSERT INTO usertype (type) VALUES (user)",
 				"INSERT INTO useraccount (firstname, lastname, username, usertypeid, email, phonenumber, isdeleted, pw) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) returning *",
 				[
@@ -181,6 +180,28 @@ app.put("/api/users/deleted/:id", async (req, res) => {
 //--------------------------------------------------------------
 // AUTHOR
 
+// get author by name
+app.get("/api/author/:firstname/:lastname", async (req, res) => {
+	try {
+		const results = await db.query(
+			"SELECT * FROM Author WHERE firstname = $1 AND lastname = $2",
+			[req.params.firstname, req.params.lastname]
+		);
+		console.log(results);
+		res.status(200).json({
+			status: "success",
+			data: {
+				author: results.rows[0],
+			},
+		});
+	} catch (err) {
+		console.log(err);
+		res.status(200).json({
+			status: "error",
+			error: err,
+		});
+	}
+});
 // add new author
 // done
 app.post("/api/author", async (req, res) => {
@@ -199,13 +220,36 @@ app.post("/api/author", async (req, res) => {
 			},
 		});
 	} catch (err) {
-		console.log(err);
+		res.status(201).json({
+			status: "error",
+			error: err,
+		});
 	}
 	// response.send("add new author");
 });
 
 //--------------------------------------------------------------
 // CATEGORY
+
+// get all categories
+app.get("/api/category", async (req, res) => {
+	try {
+		const category = await db.query("SELECT * FROM Category;");
+		res.status(200).json({
+			status: "success",
+			results: category.rows.length,
+			categories: category.rows,
+		});
+	} catch (err) {
+		console.log(err);
+		res.status(200).json({
+			status: "error",
+			data: {
+				error: err,
+			},
+		});
+	}
+});
 
 // add new category
 //done
@@ -225,9 +269,34 @@ app.post("/api/category", async (req, res) => {
 			},
 		});
 	} catch (err) {
-		console.log(err);
+		res.status(201).json({
+			status: "error",
+			data: {
+				error: err,
+			},
+		});
 	}
 	// response.send("add new category");
+});
+
+// delete a category
+app.delete("/api/category/:id", async (req, res) => {
+	try {
+		const results = await db.query("DELETE FROM Category WHERE id = $1", [
+			req.params.id,
+		]);
+		console.log(results);
+		res.status(201).json({
+			status: "success",
+			data: results,
+		});
+	} catch (err) {
+		console.log(err);
+		res.status(201).json({
+			status: "error",
+			data: err,
+		});
+	}
 });
 
 // add new usertype
@@ -416,8 +485,11 @@ app.put("/api/checkout/", async (req, res) => {
 
 // retrieve all catalogcards
 app.get("/api/catalogcard/", async (req, res) => {
+	const query =
+		"select cata.id, title, authorid, categoryid, description, isbn, author.firstname, author.lastname, category.name as category from catalogcard cata join category on category.id = cata.categoryid join author on author.id = authorid ORDER BY cata.id;";
+		//select cata.id, title, authorid, categoryid, description, isbn, author.firstname, author.lastname, category.name as category, from catalogcard cata join category on category.id = cata.categoryid join author on author.id = authorid ORDER BY cata.id UNITON (SELECT catalogid, count(*) as stock FROM Book WHERE isavaiable = true GROUP BY catalogid );
 	try {
-		const allcards = await db.query("SELECT * FROM catalogcard");
+		const allcards = await db.query(query);
 
 		res.status(200).json({
 			status: "success",
@@ -429,8 +501,6 @@ app.get("/api/catalogcard/", async (req, res) => {
 	} catch (err) {
 		console.log(err);
 	}
-
-	response.send("get all catalogcards");
 });
 
 // get the available stock for a catalogCard
@@ -461,8 +531,14 @@ app.post("/api/catalogcard/", async (req, res) => {
 
 	try {
 		const results = await db.query(
-			"INSERT INTO catalogcard (title, authorid, categoryid, isbn) values ($1, $2, $3, $4) returning *",
-			[req.body.title, req.body.authorid, req.body.categoryid, req.body.isbn]
+			"INSERT INTO catalogcard (title, authorid, categoryid, isbn, description) values ($1, $2, $3, $4, $5) returning *",
+			[
+				req.body.title,
+				req.body.authorid,
+				req.body.categoryid,
+				req.body.isbn,
+				req.body.description,
+			]
 		);
 
 		console.log(results);
@@ -478,6 +554,56 @@ app.post("/api/catalogcard/", async (req, res) => {
 	}
 
 	response.send("get all catalogcards");
+});
+
+// update a catalog
+app.put("/api/catalog/:id", async (req, res) => {
+	// title, authorid, categoryid, isbn, description
+	try {
+		const result = await db.query(
+			"UPDATE Catalogcard SET title = $1, authorid = $2, categoryid = $3, isbn = $4, description = $5 WHERE id = $6",
+			[
+				req.body.title,
+				req.body.authorid,
+				req.body.categoryid,
+				req.body.isbn,
+				req.body.description,
+				req.params.id,
+			]
+		);
+		res.status(201).json({
+			status: "success",
+			data: {
+				catalog: result.rows,
+			},
+		});
+	} catch (err) {
+		console.log(err);
+		res.status(201).json({
+			status: "error",
+			data: err,
+		});
+	}
+});
+
+// delete a catalog
+app.delete("/api/catalogcard/:id", async (req, res) => {
+	try {
+		const results = await db.query("DELETE FROM Catalog WHERE id = $1", [
+			req.params.id,
+		]);
+		console.log(results);
+		res.status(201).json({
+			status: "success",
+			data: results,
+		});
+	} catch (err) {
+		console.log(err);
+		res.status(201).json({
+			status: "error",
+			data: err,
+		});
+	}
 });
 
 //--------------------------------------------------------------

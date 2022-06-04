@@ -42,7 +42,7 @@ const Register = (props) => {
 				As a memeber, you can access to the most popular ebooks! Always
 				instantly delivery!
 			</p>
-			<form onSubmit={handleSubmit}>
+			<form onSubmit={(e) => handleSubmit(e)}>
 				<div style={{ width: "50%", margin: "auto" }} className="text-start">
 					<div className="form-text text-center text-danger">
 						We'll never share your infomation with anyone else.

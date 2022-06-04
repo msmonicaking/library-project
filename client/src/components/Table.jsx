@@ -93,17 +93,17 @@ const Table = () => {
 	};
 
 	const handleBackPage = () => {
-		setCurPage(curPage - 1);
-		const index = (curPage - 1) * pageSize;
+		const index = (curPage - 2) * pageSize;
 		const books = data.slice(index, index + 5);
 		setPaginatedBooks(books);
+		setCurPage(curPage - 1);
 	};
 
 	const handleForwardPage = () => {
-		setCurPage(curPage + 1);
-		const index = (curPage - 1) * pageSize;
+		const index = (curPage) * pageSize;
 		const books = data.slice(index, index + 5);
 		setPaginatedBooks(books);
+		setCurPage(curPage + 1);
 	};
 
 	const [curPage, setCurPage] = useState(1);
