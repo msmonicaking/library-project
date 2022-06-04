@@ -16,9 +16,9 @@ const Index = (props) => {
 
 	return (
 		<div className="text-center">
-			<Header user={props.user}></Header>
+			<Header user={props.user} setUser={props.setUser}></Header>
 			<div className="d-flex bg-light">
-				<SideBar></SideBar>
+				<SideBar type={props.user.usertype}></SideBar>
 				<div style={{ width: "80vw" }} className="bg-light">
 					<SearchBar></SearchBar>
 					<Table></Table>

@@ -3,9 +3,7 @@ import axios from "axios";
 import Header from "./Header";
 import SideBar from "./SideBar";
 const Category = (props) => {
-  const user = {
-    username : 'advise2013'
-  }
+  const user = props.user;
 	const [cate, setCate] = useState("");
 	const [category, setCategory] = useState([]);
 	useEffect(() => {
@@ -35,7 +33,7 @@ const Category = (props) => {
 	};
 
 	const handleDelete = (id) => {
-    if (window.confirm("Are you sure you want delete this category?")) {
+    if (window.confirm("Are you sure you want to delete this category?")) {
       axios
 			.delete("http://localhost:8080/api/category/" + id)
 			.then((res) => {
@@ -51,11 +49,11 @@ const Category = (props) => {
 	};
 	return (
 		<div>
-			<Header user={user}></Header>
+			<Header user={user} setUser={props.setUser}></Header>
 			<div className="d-flex bg-light">
-				<SideBar></SideBar>
+				<SideBar type={user.usertype}></SideBar>
 				<div style={{ width: "80vw" }} className="bg-light">
-					<h1 className="mb-4 text-center">Category Management</h1>
+					<h2 className="mb-4 text-center">Category Management</h2>
 					<table
 						className="table table-bordered"
 						style={{ width: "80%", margin: "auto" }}

@@ -1,6 +1,14 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 const Header = (props) => {
+	const navi = useNavigate();
+	const setUser = props.setUser;
+	const handleLogOut = (e) => {
+		e.preventDefault();
+		setUser({});
+		alert("You are successfuly logged out!");
+		navi("/");
+	};
 	return (
 		<div
 			className="d-flex justify-content-around align-items-center"
@@ -17,13 +25,12 @@ const Header = (props) => {
 			<div>
 				<p className="text-light">
 					Welcome,&nbsp;
-					<a href="/edituser">{props.user.username}</a>
+					<Link to={`/user/${props.user.userid}`}>{props.user.username}</Link>
 				</p>
-				<Link to={"/"}>
-					<button className="btn btn-danger">
-						Log out
-					</button>
-				</Link>
+
+				<button className="btn btn-danger" onClick={(e) => handleLogOut(e)}>
+					Log out
+				</button>
 			</div>
 		</div>
 	);

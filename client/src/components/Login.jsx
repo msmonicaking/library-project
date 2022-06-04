@@ -17,6 +17,7 @@ const Login = (props) => {
 					setUser({
 						userid: user.data.data.user.id,
 						username: user.data.data.user.username,
+						usertype: user.data.data.user.usertypeid
 					});
 					navigate("/main");
 				} else {

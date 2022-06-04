@@ -1,13 +1,13 @@
 import React from "react";
-
-const SideBar = () => {
+import { Link } from "react-router-dom";
+const SideBar = (props) => {
+	const type = props.type;
 	return (
 		<div
 			className="d-flex flex-column justify-content-between bg-dark"
 			style={{
 				height: "75vh",
 				width: "20vw",
-				// backgroundColor: "navy",
 				color: "whitesmoke",
 			}}
 		>
@@ -17,6 +17,11 @@ const SideBar = () => {
 			<h3>Editor's Chocie</h3>
 			<h3>Order History</h3>
 			<h3>Account</h3>
+			{type === 2 && (
+				<Link to={"/adminpanel"} style={{textDecoration:'none', color:'white'}}>
+					<h3>Admin Panel</h3>
+				</Link>
+			)}
 		</div>
 	);
 };

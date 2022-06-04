@@ -1,53 +1,70 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import axios from "axios";
-const Register = (props) => {
-	const setUser = props.setUser;
-	const [username, setUsername] = useState("");
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import baseURL from "../baseURL";
+
+const EditUser = (props) => {
+	const id = props.id;
+	const currentUser = props.curid;
+	const navigate = useNavigate();
+	const [temp, setTemp] = useState("");
 	const [firstname, setFirstname] = useState("");
 	const [lastname, setLastname] = useState("");
 	const [email, setEmail] = useState("");
 	const [phone, setPhone] = useState("");
-	const [password, setPassword] = useState("");
-	const navigate = useNavigate();
+	useEffect(() => {
+		axios
+			.get(baseURL + "users/id/" + id)
+			.then((res) => {
+				setFirstname(res.data.data.user.firstname);
+				setLastname(res.data.data.user.lastname);
+				setEmail(res.data.data.user.email);
+				setPhone(res.data.data.user.phonenumber);
+				setTemp(
+					res.data.data.user.firstname + " " + res.data.data.user.lastname
+				);
+			})
+			.catch((err) => console.log(err));
+	}, [id]);
+
+	const handleDelete = (e) => {
+    e.preventDefault();
+		if (window.confirm("Are you sure you want to delete this account?")) {
+			axios.put(`${baseURL}users/deleted/${id}`).then((res) => {
+				console.log(res);
+				if (currentUser === id) {
+					props.setUser({});
+					navigate("/");
+				} else {
+					navigate('/manageuser');
+				}
+			});
+		}
+	};
 	const handleSubmit = (e) => {
 		e.preventDefault();
 		axios
-			.post("http://localhost:8080/api/users", {
+			.put(baseURL + "users/" + id, {
 				firstname,
 				lastname,
-				username,
-				usertypeid: 1,
 				email,
 				phonenumber: phone,
-				isdeleted: false,
-				password,
 			})
 			.then((res) => {
 				console.log(res);
-				setUser({
-					userid: res.data.data.user.id,
-					username: res.data.data.user.username,
-					usertype: res.data.data.user.usertypeid,
-				});
-				navigate("/main");
+				alert("Update Successfully!");
+				navigate(-1);
 			})
 			.catch((err) => {
 				console.log("error", err.response);
 			});
 	};
+
 	return (
 		<div className="text-center">
-			<h1 className="text-success">Register to MongoKiwi Ebooks</h1>
-			<p className="text-warning">
-				As a memeber, you can access to the most popular ebooks! Always
-				instantly delivery!
-			</p>
+			<h2>Edit {temp} Profile</h2>
 			<form onSubmit={(e) => handleSubmit(e)}>
 				<div style={{ width: "50%", margin: "auto" }} className="text-start">
-					<div className="form-text text-center text-danger">
-						We'll never share your infomation with anyone else.
-					</div>
 					<div className="mb-3">
 						<label htmlFor="firstname" className="form-label">
 							Firstname*
@@ -70,18 +87,6 @@ const Register = (props) => {
 							id="lastname"
 							value={lastname}
 							onChange={(e) => setLastname(e.target.value)}
-						/>
-					</div>
-					<div className="mb-3">
-						<label htmlFor="username" className="form-label">
-							Username*
-						</label>
-						<input
-							type="text"
-							className="form-control"
-							id="username"
-							value={username}
-							onChange={(e) => setUsername(e.target.value)}
 						/>
 					</div>
 					<div className="mb-3">
@@ -108,23 +113,18 @@ const Register = (props) => {
 							onChange={(e) => setPhone(e.target.value)}
 						/>
 					</div>
-					<div className="mb-3">
-						<label htmlFor="password" className="form-label">
-							Password*
-						</label>
+					<div className="d-flex">
 						<input
-							type="password"
-							className="form-control"
-							id="password"
-							value={password}
-							onChange={(e) => setPassword(e.target.value)}
+							type="submit"
+							value="Update"
+							className="btn btn-success"
+							style={{ marginRight: "15px" }}
 						/>
+						<button className="btn btn-danger" onClick={(e) => handleDelete(e)}>
+							Delete
+						</button>
 					</div>
-					<input
-						type="submit"
-						value="Create Account"
-						className="btn btn-primary"
-					/>
+
 					<div className="form-text text-danger">
 						* indicates required field
 					</div>
@@ -134,4 +134,4 @@ const Register = (props) => {
 	);
 };
 
-export default Register;
+export default EditUser;

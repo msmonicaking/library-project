@@ -24,7 +24,9 @@ app.use(express.json());
 // done
 app.get("/api/users/", async (req, res) => {
 	try {
-		const results = await db.query("SELECT * FROM useraccount");
+		const results = await db.query(
+			"SELECT * FROM useraccount WHERE isdeleted = false;"
+		);
 
 		console.log(results);
 
@@ -37,7 +39,12 @@ app.get("/api/users/", async (req, res) => {
 			},
 		});
 	} catch (err) {
-		console.log(err);
+		res.status(200).json({
+			status: "error",
+			data: {
+				error: err,
+			},
+		});
 	}
 });
 
@@ -52,7 +59,6 @@ app.post(
 
 		try {
 			const results = await db.query(
-				"INSERT INTO usertype (type) VALUES (user)",
 				"INSERT INTO useraccount (firstname, lastname, username, usertypeid, email, phonenumber, isdeleted, pw) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) returning *",
 				[
 					req.body.firstname,
@@ -87,9 +93,10 @@ app.post(
 
 app.get("/api/users/:email", async (req, res) => {
 	try {
-		const user = await db.query("SELECT * FROM useraccount WHERE email = $1;", [
-			req.params.email,
-		]);
+		const user = await db.query(
+			"SELECT * FROM useraccount WHERE email = $1 AND isdeleted = false",
+			[req.params.email]
+		);
 		res.status(200).json({
 			status: "success",
 			data: {
@@ -103,14 +110,15 @@ app.get("/api/users/:email", async (req, res) => {
 
 // GET get USER with ID
 // done
-app.get("/api/users/:id", async (req, res) => {
-	console.log(`${req.params.id}`);
+app.get("/api/users/id/:id", async (req, res) => {
+	console.log(req.params.id);
 	try {
-		const results = await db.query("SELECT * FROM useraccount where id = $1;", [
-			req.params.id,
-		]);
+		const results = await db.query(
+			"SELECT * FROM useraccount where id = $1 AND isdeleted = false;",
+			[req.params.id]
+		);
 
-		// console.log(results.rows[0]);
+		console.log(results.rows);
 
 		res.status(200).json({
 			status: "success",
@@ -131,14 +139,12 @@ app.get("/api/users/:id", async (req, res) => {
 app.put("/api/users/:id", async (req, res) => {
 	try {
 		const results = await db.query(
-			"UPDATE useraccount SET firstname = $1, lastname = $2, email = $3, usertypeid = $4, phonenumber = $5, isdeleted = $6 where id = $7 returning *",
+			"UPDATE useraccount SET firstname = $1, lastname = $2, email = $3, phonenumber = $4 where id = $5 returning *",
 			[
 				req.body.firstname,
 				req.body.lastname,
 				req.body.email,
-				req.body.usertypeid,
 				req.body.phonenumber,
-				req.body.isdeleted,
 				req.params.id,
 			]
 		);
@@ -175,6 +181,29 @@ app.put("/api/users/deleted/:id", async (req, res) => {
 	}
 
 	console.log(req.params.id);
+});
+
+// Check number of books a user have read
+app.get("/api/users/read/:id", async (req, res) => {
+	try {
+		const results = await db.query(
+			" select count(*) as bookCount from checkout where useraccountid = $1;",
+			[req.params.id]
+		);
+		console.log(results);
+		res.status(200).json({
+			status: "success",
+			data: {
+				bookcount: results.rows[0],
+			},
+		});
+	} catch (err) {
+		console.log(err);
+		res.status(200).json({
+			status: "error",
+			error: err,
+		});
+	}
 });
 
 //--------------------------------------------------------------
@@ -376,9 +405,8 @@ app.post("/api/books", async (req, res) => {
 	console.log(req.body);
 	try {
 		const results = await db.query(
-			"INSERT INTO book (catalogid, isdeleted, isavailable) VALUES ($1, false, true) RETURN *;"[
-				req.body.catalogid
-			]
+			"INSERT INTO book (catalogid, isdeleted, isavaiable) VALUES ($1, false, true) RETURNING *;",
+			[req.body.catalogid]
 		);
 
 		console.log(results);
@@ -388,7 +416,7 @@ app.post("/api/books", async (req, res) => {
 			results: results.rows.length,
 
 			data: {
-				books: results.rows,
+				books: results.rows[0],
 			},
 		});
 	} catch (err) {
@@ -487,7 +515,7 @@ app.put("/api/checkout/", async (req, res) => {
 app.get("/api/catalogcard/", async (req, res) => {
 	const query =
 		"select cata.id, title, authorid, categoryid, description, isbn, author.firstname, author.lastname, category.name as category from catalogcard cata join category on category.id = cata.categoryid join author on author.id = authorid ORDER BY cata.id;";
-		//select cata.id, title, authorid, categoryid, description, isbn, author.firstname, author.lastname, category.name as category, from catalogcard cata join category on category.id = cata.categoryid join author on author.id = authorid ORDER BY cata.id UNITON (SELECT catalogid, count(*) as stock FROM Book WHERE isavaiable = true GROUP BY catalogid );
+	//select cata.id, title, authorid, categoryid, description, isbn, author.firstname, author.lastname, category.name as category, from catalogcard cata join category on category.id = cata.categoryid join author on author.id = authorid ORDER BY cata.id UNITON (SELECT catalogid, count(*) as stock FROM Book WHERE isavaiable = true GROUP BY catalogid );
 	try {
 		const allcards = await db.query(query);
 
@@ -506,7 +534,7 @@ app.get("/api/catalogcard/", async (req, res) => {
 // get the available stock for a catalogCard
 app.get("/api/catalogcard/stock/:id", (req, res) => {
 	db.query(
-		"SELECT COUNT(*) as stock FROM Book WHERE catalogid = $1 AND isavaiable = true",
+		"SELECT COUNT(*) as stock FROM Book WHERE catalogid = $1 AND isavaiable = true AND isdeleted = false;",
 		[req.params.id]
 	)
 		.then((bookStock) => {

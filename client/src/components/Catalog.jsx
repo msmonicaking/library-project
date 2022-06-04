@@ -4,10 +4,9 @@ import axios from "axios";
 import Header from "./Header";
 import SideBar from "./SideBar";
 import { Link } from "react-router-dom";
-const Catalog = (prop) => {
-	const user = {
-		username: "advise2013",
-	};
+import baseURL from "../baseURL";
+const Catalog = (props) => {
+	const user = props.user;
 	const [catalog, setCatalog] = useState([]);
 	const [paginatedBooks, setPaginatedBooks] = useState([]);
 	const pageSize = 5;
@@ -15,6 +14,34 @@ const Catalog = (prop) => {
 	const pages = Array.from({ length: pageCount }, (_, i) => i + 1);
 	const [curPage, setCurPage] = useState(1);
 
+	const increaseStock = (catalogId) => {
+		console.log(catalogId)
+		axios.post(baseURL + "books", { catalogid: catalogId }).then((res) => {
+			console.log(res.data.data.books);
+			const newCatalog = catalog.map((cat, idx) => {
+				if (catalogId === cat.id) {
+					const temp = { ...cat };
+					temp.stock += 1;
+					return temp;
+				} else {
+					return cat;
+				}
+			});
+			const newPage = paginatedBooks.map((cat, idx) => {
+				if (catalogId === cat.id) {
+					const temp = { ...cat };
+					temp.stock += 1;
+					return temp;
+				} else {
+					return cat;
+				}
+			});
+			setCatalog(newCatalog);
+			setPaginatedBooks(newPage);
+		});
+	};
+
+	const decreaseStock = (catalogId) => {};
 	const handlePage = (pageNo) => {
 		const index = (pageNo - 1) * pageSize;
 		const books = catalog.slice(index, index + 5);
@@ -73,9 +100,9 @@ const Catalog = (prop) => {
 	};
 	return (
 		<div>
-			<Header user={user}></Header>
+			<Header user={user} setUser={props.setUser}></Header>
 			<div className="d-flex bg-light">
-				<SideBar></SideBar>
+				<SideBar type={user.usertype}></SideBar>
 				<div style={{ width: "80vw" }} className="bg-light">
 					<h1 className="mb-4 text-center">Catalog Management</h1>
 					<Link to={"/catalog/add"}>
@@ -120,6 +147,7 @@ const Catalog = (prop) => {
 														cursor: "pointer",
 														padding: "5px",
 													}}
+													onClick={ () => increaseStock(cat.id)}
 												></i>
 												<i
 													className="fa-solid fa-minus border border-danger rounded-circle"
