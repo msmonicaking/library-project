@@ -26,7 +26,7 @@ const UserDetail = (props) => {
 	return (
 		<div>
 			<div
-				className="card"
+				className="card bg-light"
 				style={{
 					width: "25rem",
 					height: "25rem",
@@ -35,7 +35,7 @@ const UserDetail = (props) => {
 				}}
 			>
 				<div style={{ margin: "auto" }}>
-					<i className="fa-solid fa-user-large card-img-top"></i>
+					<i className="fa-solid fa-user-large card-img-top fa-8x"></i>
 					<div className="card-body">
 						<h5 className="card-title">
 							{person.firstname + " " + person.lastname}

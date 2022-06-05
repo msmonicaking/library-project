@@ -1,27 +1,22 @@
 import React from "react";
-import { useParams } from "react-router-dom";
-import EditUser from "../components/EditUser";
 import Header from "../components/Header";
 import SideBar from "../components/SideBar";
+import CatalogDetail from "../components/CatalogDetail";
+import { useParams } from "react-router-dom";
 
-const EditUserView = (props) => {
+const BookView = (props) => {
 	const { id } = useParams();
-
 	return (
 		<div className="text-center">
 			<Header user={props.user} setUser={props.setUser}></Header>
 			<div className="d-flex bg-light">
 				<SideBar type={props.user.usertype} user={props.user}></SideBar>
 				<div style={{ width: "80vw" }} className="bg-light">
-					<EditUser
-						id={id}
-						curid={props.user.userid}
-						setUser={props.setUser}
-					></EditUser>
+					<CatalogDetail id={id} user={props.user}></CatalogDetail>
 				</div>
 			</div>
 		</div>
 	);
 };
 
-export default EditUserView;
+export default BookView;

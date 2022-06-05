@@ -8,7 +8,7 @@ const AddCataView = (props) => {
 		<div className="text-center">
 			<Header user={props.user} setUser={props.setUser}></Header>
 			<div className="d-flex bg-light">
-				<SideBar type={props.user.usertype}></SideBar>
+				<SideBar type={props.user.usertype} user={props.user}></SideBar>
 				<div style={{ width: "80vw", height: "80vh" }} className="bg-light">
 					<AddCatalog />
 				</div>

@@ -1,115 +1,65 @@
-import React, { useState } from "react";
-
-const Table = () => {
-	const data = [
-		{
-			title: "The Great Gatsby",
-			author: "F. Scott Fitzgerald",
-			category: "Fiction",
-			isbn: "9780333791035",
-			stock: 10,
-		},
-		{
-			title: "The Joy Luck Club",
-			author: "Amy Tan",
-			category: "Fiction",
-			isbn: "9780143038092",
-			stock: 5,
-		},
-		{
-			title:
-				"Intro to Python for Computer Science and Data Science: Learning to Program with AI, Big Data and The Cloud, 1st edition",
-			author: "Paul Deitel",
-			category: "Non Fiction",
-			isbn: "9780135404676",
-			stock: 7,
-		},
-		{
-			title: "The Joy Luck Club",
-			author: "Amy Tan",
-			category: "Fiction",
-			isbn: "9780143038092",
-			stock: 5,
-		},
-		{
-			title: "The Joy Luck Club",
-			author: "Amy Tan",
-			category: "Fiction",
-			isbn: "9780143038092",
-			stock: 5,
-		},
-		{
-			title: "The Joy Luck Club",
-			author: "Amy Tan",
-			category: "Fiction",
-			isbn: "9780143038092",
-			stock: 5,
-		},
-		{
-			title: "The Joy Luck Club",
-			author: "Amy Tan",
-			category: "Fiction",
-			isbn: "9780143038092",
-			stock: 5,
-		},
-		{
-			title: "The Joy Luck Club",
-			author: "Amy Tan",
-			category: "Fiction",
-			isbn: "9780143038092",
-			stock: 5,
-		},
-		{
-			title: "The Joy Luck Club",
-			author: "Amy Tan",
-			category: "Fiction",
-			isbn: "9780143038092",
-			stock: 5,
-		},
-		{
-			title: "The Joy Luck Club",
-			author: "Amy Tan",
-			category: "Fiction",
-			isbn: "9780143038092",
-			stock: 5,
-		},
-		{
-			title: "The Joy Luck Club",
-			author: "Amy Tan",
-			category: "Fiction",
-			isbn: "9780143038092",
-			stock: 5,
-		},
-	];
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { Link } from "react-router-dom";
+import baseURL from "../baseURL";
+const Table = (props) => {
+	const [catalog, setCatalog] = useState([]);
+	const [paginatedBooks, setPaginatedBooks] = useState([]);
 	const pageSize = 5;
-	const pageCount = Math.ceil(data.length / pageSize);
+	const pageCount = Math.ceil(catalog.length / pageSize);
 	const pages = Array.from({ length: pageCount }, (_, i) => i + 1);
-	const [paginatedBooks, setPaginatedBooks] = useState(data.slice(0, 5));
+	const [curPage, setCurPage] = useState(1);
+
 	const handlePage = (pageNo) => {
 		const index = (pageNo - 1) * pageSize;
-		const books = data.slice(index, index + 5);
+		const books = catalog.slice(index, index + 5);
 		setPaginatedBooks(books);
 		setCurPage(pageNo);
 	};
 
 	const handleBackPage = () => {
 		const index = (curPage - 2) * pageSize;
-		const books = data.slice(index, index + 5);
+		const books = catalog.slice(index, index + 5);
 		setPaginatedBooks(books);
 		setCurPage(curPage - 1);
 	};
 
 	const handleForwardPage = () => {
-		const index = (curPage) * pageSize;
-		const books = data.slice(index, index + 5);
+		const index = curPage * pageSize;
+		const books = catalog.slice(index, index + 5);
 		setPaginatedBooks(books);
 		setCurPage(curPage + 1);
 	};
 
-	const [curPage, setCurPage] = useState(1);
+	useEffect(() => {
+		axios
+			.get(baseURL + "catalogcard")
+			.then((res) => {
+				const temp = res.data.data.catalogcard;
+				temp.forEach((cat) => {
+					axios
+						.get(baseURL + "catalogcard/stock/" + cat.id)
+						.then((re) => {
+							cat.stock = parseInt(re.data.stock.stock);
+							setCatalog(temp);
+							setPaginatedBooks(temp.slice(0, 5));
+						})
+						.catch((err) => console.log(err));
+				});
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	}, []);
+
 	return (
-		<div className="mt-4">
-			<table className="table" style={{ width: "80%", margin: "auto" }}>
+		<div style={{ width: "80vw" }} className="bg-light">
+			<h1 className="mb-4 text-center">All Books</h1>
+			<table
+				className="table table-bordered"
+				style={{ width: "80%", margin: "auto" }}
+			>
 				<thead>
 					<tr>
 						<th scope="col">Title</th>
@@ -120,15 +70,21 @@ const Table = () => {
 					</tr>
 				</thead>
 				<tbody>
-					{paginatedBooks.map((book, idx) => (
-						<tr key={idx}>
-							<td>{book.title}</td>
-							<td>{book.author}</td>
-							<td>{book.category}</td>
-							<td>{book.isbn}</td>
-							<td>{book.stock}</td>
-						</tr>
-					))}
+					{paginatedBooks.map((cat, idx) => {
+						return (
+							<tr key={cat.id}>
+								<td>
+									<Link to={`/book/${cat.id}`}>{cat.title}</Link>
+								</td>
+								<td>{cat.firstname + " " + cat.lastname}</td>
+								<td>{cat.category}</td>
+								<td>{cat.isbn}</td>
+								<td>
+									<div className="d-flex align-items-center">{cat.stock}</div>
+								</td>
+							</tr>
+						);
+					})}
 				</tbody>
 			</table>
 			<nav className="d-flex justify-content-center align-items-center mt-3">

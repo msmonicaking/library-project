@@ -12,6 +12,9 @@ import UpdateCataView from "./views/UpdateCataView";
 import ManageUser from "./components/ManageUser";
 import UserView from "./views/UserView";
 import EditUserView from "./views/EditUserView";
+import BookView from "./views/BookView";
+import Fiction from "./components/Fictions";
+import NonFiction from "./components/NonFiction";
 
 function App() {
 	const [user, setUser] = useState({});
@@ -26,11 +29,24 @@ function App() {
 					path="/register"
 					element={<Register user={user} setUser={setUser} />}
 				></Route>
+
+				{/* Main Page, Display All Books */}
 				<Route
 					path="/main"
 					element={<Index user={user} setUser={setUser} />}
 				></Route>
 
+				{/* Display All Fictions */}
+				<Route
+					path="/fiction"
+					element={<Fiction user={user} setUser={setUser} />}
+				></Route>
+
+				{/* Display All Non-Fictions */}
+				<Route
+					path="/nonfiction"
+					element={<NonFiction user={user} setUser={setUser} />}
+				></Route>
 				{/* User Detail */}
 				<Route
 					path="/user/:id"
@@ -42,6 +58,13 @@ function App() {
 					path="/user/edit/:id"
 					element={<EditUserView user={user} setUser={setUser} />}
 				></Route>
+
+				{/* View A Book */}
+				<Route
+					path="/book/:id"
+					element={<BookView user={user} setUser={setUser} />}
+				></Route>
+
 				{/* Admin Section */}
 				<Route
 					path="/adminpanel"

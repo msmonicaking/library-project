@@ -21,7 +21,7 @@ const ManageUser = (props) => {
 		<div>
 			<Header user={user} setUser={setUser}></Header>
 			<div className="d-flex bg-light">
-				<SideBar type={user.usertype}></SideBar>
+				<SideBar type={props.user.usertype} user={props.user}></SideBar>
 				<div style={{ width: "80vw" }} className="bg-light">
 					<h2 className="mb-4 text-center text-success">All Users</h2>
 					<table

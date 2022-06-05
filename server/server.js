@@ -429,7 +429,66 @@ app.post("/api/books", async (req, res) => {
 app.put("/api/books/deleted/:id", async (req, res) => {
 	try {
 		const results = await db.query(
-			"UPDATE book SET isdeleted = true WHERE id = id "
+			"UPDATE book SET isdeleted = true, isavaiable = false WHERE id = $1",
+			[req.params.id]
+		);
+
+		console.log(results);
+
+		res.status(201).json({
+			status: "success",
+			results: results.rows.length,
+
+			data: {
+				books: results.rows,
+			},
+		});
+	} catch (err) {
+		res.status(201).json({
+			status: "error",
+			results: results.rows.length,
+
+			data: {
+				error: err,
+			},
+		});
+	}
+});
+
+//--------------------------------------------------------------
+// CHECKOUT
+// get an available book
+app.get("/api/book/get/:catid", async (req, res) => {
+	try {
+		const results = await db.query(
+			"SELECT * FROM Book WHERE catalogid = $1 AND isavaiable = true AND isdeleted = false order by id LIMIT 1;",
+			[req.params.catid]
+		);
+
+		console.log(results);
+
+		res.status(200).json({
+			status: "success",
+			data: {
+				book: results.rows[0],
+			},
+		});
+	} catch (err) {
+		res.status(200).json({
+			status: "error",
+			data: {
+				error: err,
+			},
+		});
+	}
+});
+
+// mark a book as on loan
+app.put("/api/book/:id", async (req, res) => {
+	try {
+		const results = await db.query(
+			"UPDATE book SET isavaiable = false WHERE id = $1;",
+			[req.params.id]
 		);
 
 		console.log(results);
@@ -439,28 +498,29 @@ app.put("/api/books/deleted/:id", async (req, res) => {
 			results: results.rows.length,
 
 			data: {
-				books: results.rows,
+				books: results.rows[0],
 			},
 		});
 	} catch (err) {
-		console.log(err);
+		res.status(200).json({
+			status: "error",
+			data: {
+				error: err,
+			},
+		});
 	}
-
-	response.send("delete a book");
 });
-
-//--------------------------------------------------------------
-// CHECKOUT
-
 // create a checkout
 // check book out case
-app.post("/api/checkout/", async (req, res) => {
+app.post("/api/checkout", async (req, res) => {
 	console.log(req.body);
-
+	const dateout = new Date(Date.now());
+	let returnby = new Date(Date.now());
+	returnby.setMonth(returnby.getMonth() + 1);
 	try {
 		const results = await db.query(
-			"INSERT INTO checkout (userid, bookid, dateout, returnby, isreturned) VALUES ($1, $2, $3, $4, false)",
-			[req.body.userid, req.body.bookid, req.body.dateout, req.body.returnby]
+			"INSERT INTO checkout (useraccountid, bookid, dateout, returnby, isreturned) VALUES ($1, $2, $3, $4, false)",
+			[req.body.userid, req.body.bookid, dateout, returnby]
 		);
 
 		console.log(results);
@@ -468,16 +528,12 @@ app.post("/api/checkout/", async (req, res) => {
 		res.status(201).json({
 			status: "success",
 			data: {
-				data: {
-					books: results.rows[0],
-				},
+				books: results.rows[0],
 			},
 		});
 	} catch (err) {
 		console.log(err);
 	}
-
-	response.send("create a checkout");
 });
 
 // update a checkout
@@ -515,7 +571,6 @@ app.put("/api/checkout/", async (req, res) => {
 app.get("/api/catalogcard/", async (req, res) => {
 	const query =
 		"select cata.id, title, authorid, categoryid, description, isbn, author.firstname, author.lastname, category.name as category from catalogcard cata join category on category.id = cata.categoryid join author on author.id = authorid ORDER BY cata.id;";
-	//select cata.id, title, authorid, categoryid, description, isbn, author.firstname, author.lastname, category.name as category, from catalogcard cata join category on category.id = cata.categoryid join author on author.id = authorid ORDER BY cata.id UNITON (SELECT catalogid, count(*) as stock FROM Book WHERE isavaiable = true GROUP BY catalogid );
 	try {
 		const allcards = await db.query(query);
 
@@ -529,6 +584,64 @@ app.get("/api/catalogcard/", async (req, res) => {
 	} catch (err) {
 		console.log(err);
 	}
+});
+
+// get all fictions
+app.get("/api/catalogcard/fiction", async (req, res) => {
+	const query =
+		"select cata.id, title, authorid, categoryid, description, isbn, author.firstname, author.lastname, category.name as category from catalogcard cata join category on category.id = cata.categoryid join author on author.id = authorid WHERE category.name = 'Fiction' ORDER BY cata.id;";
+	try {
+		const allcards = await db.query(query);
+
+		res.status(200).json({
+			status: "success",
+			results: allcards.rows.length,
+			data: {
+				catalogcard: allcards.rows,
+			},
+		});
+	} catch (err) {
+		console.log(err);
+	}
+});
+
+// get all non-fictions
+app.get("/api/catalogcard/nonfiction", async (req, res) => {
+	const query =
+		"select cata.id, title, authorid, categoryid, description, isbn, author.firstname, author.lastname, category.name as category from catalogcard cata join category on category.id = cata.categoryid join author on author.id = authorid WHERE category.name = 'Non Fiction' ORDER BY cata.id;";
+	try {
+		const allcards = await db.query(query);
+
+		res.status(200).json({
+			status: "success",
+			results: allcards.rows.length,
+			data: {
+				catalogcard: allcards.rows,
+			},
+		});
+	} catch (err) {
+		console.log(err);
+	}
+});
+// get a catalog by id
+app.get("/api/catalogcard/:id", (req, res) => {
+	db.query(
+		"select cata.id, title, authorid, categoryid, description, isbn, author.firstname, author.lastname, category.name as category from catalogcard cata join category on category.id = cata.categoryid join author on author.id = authorid WHERE cata.id = $1;",
+		[req.params.id]
+	)
+		.then((book) => {
+			res.status(200).json({
+				status: "success",
+				book: book.rows[0],
+			});
+		})
+		.catch((err) => {
+			console.log(err);
+			res.status(200).json({
+				status: "error",
+				data: err,
+			});
+		});
 });
 
 // get the available stock for a catalogCard

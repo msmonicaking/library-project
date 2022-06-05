@@ -3,7 +3,7 @@ import axios from "axios";
 import Header from "./Header";
 import SideBar from "./SideBar";
 const Category = (props) => {
-  const user = props.user;
+	const user = props.user;
 	const [cate, setCate] = useState("");
 	const [category, setCategory] = useState([]);
 	useEffect(() => {
@@ -33,25 +33,24 @@ const Category = (props) => {
 	};
 
 	const handleDelete = (id) => {
-    if (window.confirm("Are you sure you want to delete this category?")) {
-      axios
-			.delete("http://localhost:8080/api/category/" + id)
-			.then((res) => {
-				console.log(res);
-				const deletedAry = category.filter((item) => item.id !== id);
-				setCategory(deletedAry);
-			})
-			.catch((err) => {
-				console.log(err);
-			});
-    }
-
+		if (window.confirm("Are you sure you want to delete this category?")) {
+			axios
+				.delete("http://localhost:8080/api/category/" + id)
+				.then((res) => {
+					console.log(res);
+					const deletedAry = category.filter((item) => item.id !== id);
+					setCategory(deletedAry);
+				})
+				.catch((err) => {
+					console.log(err);
+				});
+		}
 	};
 	return (
 		<div>
 			<Header user={user} setUser={props.setUser}></Header>
 			<div className="d-flex bg-light">
-				<SideBar type={user.usertype}></SideBar>
+				<SideBar type={props.user.usertype} user={props.user}></SideBar>
 				<div style={{ width: "80vw" }} className="bg-light">
 					<h2 className="mb-4 text-center">Category Management</h2>
 					<table

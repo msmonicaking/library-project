@@ -5,7 +5,7 @@ import Header from "./Header";
 import SideBar from "./SideBar";
 import { Link } from "react-router-dom";
 import baseURL from "../baseURL";
-const Catalog = (props) => {
+const NonFiction = (props) => {
 	const user = props.user;
 	const [catalog, setCatalog] = useState([]);
 	const [paginatedBooks, setPaginatedBooks] = useState([]);
@@ -14,66 +14,6 @@ const Catalog = (props) => {
 	const pages = Array.from({ length: pageCount }, (_, i) => i + 1);
 	const [curPage, setCurPage] = useState(1);
 
-	const increaseStock = (catalogId) => {
-		console.log(catalogId);
-		axios.post(baseURL + "books", { catalogid: catalogId }).then((res) => {
-			console.log(res.data.data.books);
-			const newCatalog = catalog.map((cat, idx) => {
-				if (catalogId === cat.id) {
-					const temp = { ...cat };
-					temp.stock += 1;
-					return temp;
-				} else {
-					return cat;
-				}
-			});
-			const newPage = paginatedBooks.map((cat, idx) => {
-				if (catalogId === cat.id) {
-					const temp = { ...cat };
-					temp.stock += 1;
-					return temp;
-				} else {
-					return cat;
-				}
-			});
-			setCatalog(newCatalog);
-			setPaginatedBooks(newPage);
-		});
-	};
-
-	const decreaseStock = (catalogId, curStock) => {
-		axios
-			.get(baseURL + "book/get/" + catalogId)
-			.then((res) => {
-				axios
-					.put(baseURL + "books/deleted/" + parseInt(res.data.data.book.id))
-					.then((res) => {
-						console.log(res);
-						const newCatalog = catalog.map((cat, idx) => {
-							if (catalogId === cat.id) {
-								const temp = { ...cat };
-								temp.stock -= 1;
-								return temp;
-							} else {
-								return cat;
-							}
-						});
-						const newPage = paginatedBooks.map((cat, idx) => {
-							if (catalogId === cat.id) {
-								const temp = { ...cat };
-								temp.stock -= 1;
-								return temp;
-							} else {
-								return cat;
-							}
-						});
-						setCatalog(newCatalog);
-						setPaginatedBooks(newPage);
-					})
-					.catch((err) => console.log(err));
-			})
-			.catch((err) => console.log(err));
-	};
 	const handlePage = (pageNo) => {
 		const index = (pageNo - 1) * pageSize;
 		const books = catalog.slice(index, index + 5);
@@ -97,12 +37,12 @@ const Catalog = (props) => {
 
 	useEffect(() => {
 		axios
-			.get("http://localhost:8080/api/catalogcard")
+			.get(baseURL + "catalogcard/nonfiction")
 			.then((res) => {
 				const temp = res.data.data.catalogcard;
 				temp.forEach((cat) => {
 					axios
-						.get("http://localhost:8080/api/catalogcard/stock/" + cat.id)
+						.get(baseURL + "catalogcard/stock/" + cat.id)
 						.then((re) => {
 							cat.stock = parseInt(re.data.stock.stock);
 							setCatalog(temp);
@@ -116,35 +56,13 @@ const Catalog = (props) => {
 			});
 	}, []);
 
-	const handleDelete = (id) => {
-		if (window.confirm("Are you sure you want delete this catalog?")) {
-			axios
-				.delete("http://localhost:8080/api/catalogcard/" + id)
-				.then((res) => {
-					console.log(res);
-					const deletedAry = catalog.filter((item) => item.id !== id);
-					setCatalog(deletedAry);
-				})
-				.catch((err) => {
-					console.log(err);
-				});
-		}
-	};
 	return (
 		<div>
 			<Header user={user} setUser={props.setUser}></Header>
 			<div className="d-flex bg-light">
 				<SideBar type={props.user.usertype} user={props.user}></SideBar>
 				<div style={{ width: "80vw" }} className="bg-light">
-					<h1 className="mb-4 text-center">Catalog Management</h1>
-					<Link to={"/catalog/add"}>
-						<button
-							className="btn btn-primary mb-3"
-							style={{ marginLeft: "10%" }}
-						>
-							Add Catalog
-						</button>
-					</Link>
+					<h1 className="mb-4 text-center">All Non-Fictions</h1>
 					<table
 						className="table table-bordered"
 						style={{ width: "80%", margin: "auto" }}
@@ -156,7 +74,6 @@ const Catalog = (props) => {
 								<th scope="col">Category</th>
 								<th scope="col">ISBN</th>
 								<th scope="col">Stock</th>
-								<th scope="col">Actions</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -172,49 +89,7 @@ const Catalog = (props) => {
 										<td>
 											<div className="d-flex align-items-center">
 												{cat.stock}
-												<i
-													className="fa-solid fa-plus border border-primary rounded-circle"
-													style={{
-														marginLeft: "10px",
-														marginRight: "10px",
-														color: "blue",
-														cursor: "pointer",
-														padding: "5px",
-													}}
-													onClick={() => increaseStock(cat.id)}
-												></i>
-												{parseInt(cat.stock) > 0 ? (
-													<i
-														className="fa-solid fa-minus border border-danger rounded-circle"
-														style={{
-															color: "red",
-															cursor: "pointer",
-															padding: "5px",
-														}}
-														onClick={() => decreaseStock(cat.id)}
-													></i>
-												) : (
-													<i
-														className="fa-solid fa-minus border border-danger rounded-circle"
-														style={{
-															color: "red",
-															padding: "5px",
-														}}
-													></i>
-												)}
 											</div>
-										</td>
-										<td className="d-flex">
-											<Link to={"/catalog/" + cat.id}>
-												<button className="btn btn-success">Update</button>
-											</Link>
-											<button
-												className="btn btn-danger"
-												onClick={() => handleDelete(cat.id)}
-												style={{ marginLeft: "20px" }}
-											>
-												Delete
-											</button>
 										</td>
 									</tr>
 								);
@@ -273,4 +148,4 @@ const Catalog = (props) => {
 	);
 };
 
-export default Catalog;
+export default NonFiction;
