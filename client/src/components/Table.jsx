@@ -3,13 +3,16 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import baseURL from "../baseURL";
+import SearchBar from "./SearchBar";
 const Table = (props) => {
+	
 	const [catalog, setCatalog] = useState([]);
 	const [paginatedBooks, setPaginatedBooks] = useState([]);
 	const pageSize = 5;
 	const pageCount = Math.ceil(catalog.length / pageSize);
 	const pages = Array.from({ length: pageCount }, (_, i) => i + 1);
 	const [curPage, setCurPage] = useState(1);
+	const [restart, setRestart] = useState(0)
 
 	const handlePage = (pageNo) => {
 		const index = (pageNo - 1) * pageSize;
@@ -51,84 +54,94 @@ const Table = (props) => {
 			.catch((err) => {
 				console.log(err);
 			});
-	}, []);
+	}, [restart]);
 
 	return (
-		<div style={{ width: "80vw" }} className="bg-light">
-			<h1 className="mb-4 text-center">All Books</h1>
-			<table
-				className="table table-bordered"
-				style={{ width: "80%", margin: "auto" }}
-			>
-				<thead>
-					<tr>
-						<th scope="col">Title</th>
-						<th scope="col">Author</th>
-						<th scope="col">Category</th>
-						<th scope="col">ISBN</th>
-						<th scope="col">Stock</th>
-					</tr>
-				</thead>
-				<tbody>
-					{paginatedBooks.map((cat, idx) => {
-						return (
-							<tr key={cat.id}>
-								<td>
-									<Link to={`/book/${cat.id}`}>{cat.title}</Link>
-								</td>
-								<td>{cat.firstname + " " + cat.lastname}</td>
-								<td>{cat.category}</td>
-								<td>{cat.isbn}</td>
-								<td>
-									<div className="d-flex align-items-center">{cat.stock}</div>
-								</td>
-							</tr>
-						);
-					})}
-				</tbody>
-			</table>
-			<nav className="d-flex justify-content-center align-items-center mt-3">
-				<ul className="pagination">
-					<li className={curPage === 1 ? "page-item disabled" : "page-item"}>
-						<p
-							className="page-link"
-							style={{ cursor: "pointer" }}
-							onClick={() => handleBackPage()}
-						>
-							<i className="fa-solid fa-angles-left"></i>
-						</p>
-					</li>
-					{pages.map((page, idx) => (
+		<div>
+			<SearchBar
+			 	restart = {restart}
+				setRestart={setRestart}
+				catalog={catalog}
+				paginatedBooks={paginatedBooks}
+				setCatalog={setCatalog}
+				setPaginatedBooks={setPaginatedBooks}
+			></SearchBar>
+			<div style={{ width: "80vw" }} className="bg-light">
+				<h1 className="mb-4 text-center">All Books</h1>
+				<table
+					className="table table-bordered"
+					style={{ width: "80%", margin: "auto" }}
+				>
+					<thead>
+						<tr>
+							<th scope="col">Title</th>
+							<th scope="col">Author</th>
+							<th scope="col">Category</th>
+							<th scope="col">ISBN</th>
+							<th scope="col">Stock</th>
+						</tr>
+					</thead>
+					<tbody>
+						{paginatedBooks.map((cat, idx) => {
+							return (
+								<tr key={cat.id}>
+									<td>
+										<Link to={`/book/${cat.id}`}>{cat.title}</Link>
+									</td>
+									<td>{cat.firstname + " " + cat.lastname}</td>
+									<td>{cat.category}</td>
+									<td>{cat.isbn}</td>
+									<td>
+										<div className="d-flex align-items-center">{cat.stock}</div>
+									</td>
+								</tr>
+							);
+						})}
+					</tbody>
+				</table>
+				<nav className="d-flex justify-content-center align-items-center mt-3">
+					<ul className="pagination">
+						<li className={curPage === 1 ? "page-item disabled" : "page-item"}>
+							<p
+								className="page-link"
+								style={{ cursor: "pointer" }}
+								onClick={() => handleBackPage()}
+							>
+								<i className="fa-solid fa-angles-left"></i>
+							</p>
+						</li>
+						{pages.map((page, idx) => (
+							<li
+								className={page === curPage ? "page-item active" : "page-item"}
+								key={idx}
+							>
+								<p
+									className="page-link"
+									onClick={() => handlePage(page)}
+									style={{
+										cursor: "pointer",
+									}}
+								>
+									{page}
+								</p>
+							</li>
+						))}
 						<li
-							className={page === curPage ? "page-item active" : "page-item"}
-							key={idx}
+							className={
+								curPage === pageCount ? "page-item disabled" : "page-item"
+							}
 						>
 							<p
 								className="page-link"
-								onClick={() => handlePage(page)}
-								style={{
-									cursor: "pointer",
-								}}
+								style={{ cursor: "pointer" }}
+								onClick={() => handleForwardPage()}
 							>
-								{page}
+								<i className="fa-solid fa-angles-right"></i>
 							</p>
 						</li>
-					))}
-					<li
-						className={
-							curPage === pageCount ? "page-item disabled" : "page-item"
-						}
-					>
-						<p
-							className="page-link"
-							style={{ cursor: "pointer" }}
-							onClick={() => handleForwardPage()}
-						>
-							<i className="fa-solid fa-angles-right"></i>
-						</p>
-					</li>
-				</ul>
-			</nav>
+					</ul>
+				</nav>
+			</div>
 		</div>
 	);
 };

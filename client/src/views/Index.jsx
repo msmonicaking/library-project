@@ -2,7 +2,6 @@
 import React, { useEffect } from "react";
 import Header from "../components/Header";
 import SideBar from "../components/SideBar";
-import SearchBar from "../components/SearchBar";
 import Table from "../components/Table";
 import { useNavigate } from "react-router-dom";
 
@@ -20,7 +19,6 @@ const Index = (props) => {
 			<div className="d-flex bg-light">
 				<SideBar type={props.user.usertype} user={props.user}></SideBar>
 				<div style={{ width: "80vw" }} className="bg-light">
-					<SearchBar></SearchBar>
 					<Table></Table>
 				</div>
 			</div>
