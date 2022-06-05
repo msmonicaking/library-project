@@ -510,6 +510,51 @@ app.put("/api/book/:id", async (req, res) => {
 		});
 	}
 });
+
+app.get("/api/allorders", async (req, res) => {
+	try {
+		const results = await db.query(
+			"select c.*, u.username, u.firstname, u.lastname, cat.title, a.firstname as authorfn, a.lastname as authorln FROM Checkout c JOIN Useraccount u ON c.useraccountid = u.id JOIN Book on Book.id = c.bookid JOIN Catalogcard cat ON cat.id = Book.catalogid JOIN Author a ON a.id = cat.authorid ORDER BY c.isreturned;"
+		);
+ 
+		res.status(200).json({
+			status: "success",
+			data: {
+				orders: results.rows,
+			},
+		});
+	} catch (err) {
+		res.status(200).json({
+			status: "error",
+			data: {
+				error: err,
+			},
+		});
+	}
+});
+// get all unreturned books
+app.get("/api/orders", async (req, res) => {
+	try {
+		const results = await db.query(
+			"select c.*, u.username, u.firstname, u.lastname, cat.title, a.firstname as authorfn, a.lastname as authorln FROM Checkout c JOIN Useraccount u ON c.useraccountid = u.id JOIN Book on Book.id = c.bookid JOIN Catalogcard cat ON cat.id = Book.catalogid JOIN Author a ON a.id = cat.authorid WHERE isreturned = false;"
+		);
+
+		res.status(200).json({
+			status: "success",
+			data: {
+				orders: results.rows,
+			},
+		});
+	} catch (err) {
+		res.status(200).json({
+			status: "error",
+			data: {
+				error: err,
+			},
+		});
+	}
+});
+
 // create a checkout
 // check book out case
 app.post("/api/checkout", async (req, res) => {

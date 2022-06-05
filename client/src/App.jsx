@@ -15,6 +15,8 @@ import EditUserView from "./views/EditUserView";
 import BookView from "./views/BookView";
 import Fiction from "./components/Fictions";
 import NonFiction from "./components/NonFiction";
+import BorrowedBook from "./components/BorrowedBook";
+import AllOrders from "./components/AllOrders";
 
 function App() {
 	const [user, setUser] = useState({});
@@ -89,6 +91,14 @@ function App() {
 				<Route
 					path="/manageuser"
 					element={<ManageUser user={user} setUser={setUser} />}
+				></Route>
+				<Route
+					path="/onloan"
+					element={<BorrowedBook user={user} setUser={setUser} />}
+				></Route>
+				<Route
+					path="/allorders"
+					element={<AllOrders user={user} setUser={setUser} />}
 				></Route>
 			</Routes>
 		</BrowserRouter>

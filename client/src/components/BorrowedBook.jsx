@@ -1,93 +1,80 @@
-import React, { useEffect, useState } from "react";
 import axios from "axios";
+import React, { useEffect, useState } from "react";
 import baseURL from "../baseURL";
 import Header from "./Header";
 import SideBar from "./SideBar";
-import { Link } from "react-router-dom";
 
-const ManageUser = (props) => {
-	const { user, setUser } = props;
-	const [users, setUsers] = useState([]);
-	const [paginatedUsers, setPaginatedUsers] = useState([]);
+const BorrowedBook = (props) => {
+	const [books, setBooks] = useState([]);
+	const [paginatedBooks, setPaginatedBooks] = useState([]);
 	const pageSize = 5;
-	const pageCount = Math.ceil(users.length / pageSize);
+	const pageCount = Math.ceil(books.length / pageSize);
 	const pages = Array.from({ length: pageCount }, (_, i) => i + 1);
 	const [curPage, setCurPage] = useState(1);
+
 	useEffect(() => {
 		axios
-			.get(`${baseURL}users`)
+			.get(baseURL + "orders")
 			.then((res) => {
-				const temp = res.data.data.user;
-				setUsers(temp);
-				setPaginatedUsers(temp.slice(0, 5));
+				const temp = res.data.data.orders;
+				setBooks(temp);
+				setPaginatedBooks(temp.slice(0, 5));
 			})
 			.catch((err) => console.log(err));
 	}, []);
 
 	const handlePage = (pageNo) => {
 		const index = (pageNo - 1) * pageSize;
-		const orders = users.slice(index, index + 5);
-		setPaginatedUsers(orders);
+		const orders = books.slice(index, index + 5);
+		setPaginatedBooks(orders);
 		setCurPage(pageNo);
 	};
 
 	const handleBackPage = () => {
 		const index = (curPage - 2) * pageSize;
-		const orders = users.slice(index, index + 5);
-		setPaginatedUsers(orders);
+		const orders = books.slice(index, index + 5);
+		setPaginatedBooks(orders);
 		setCurPage(curPage - 1);
 	};
 
 	const handleForwardPage = () => {
 		const index = curPage * pageSize;
-		const orders = users.slice(index, index + 5);
-		setPaginatedUsers(orders);
+		const orders = books.slice(index, index + 5);
+		setPaginatedBooks(orders);
 		setCurPage(curPage + 1);
 	};
 
 	return (
 		<div>
-			<Header user={user} setUser={setUser}></Header>
+			<Header user={props.user} setUser={props.setUser}></Header>
 			<div className="d-flex bg-light">
 				<SideBar type={props.user.usertype} user={props.user}></SideBar>
 				<div style={{ width: "80vw" }} className="bg-light">
-					<h2 className="mb-4 text-center text-success">All Users</h2>
+					<h2 className="mb-4 text-center text-success">All Books On Loan</h2>
 					<table
 						className="table table-bordered"
 						style={{ width: "80%", margin: "auto" }}
 					>
 						<thead>
 							<tr>
-								<th scope="col">First Name</th>
-								<th scope="col">Last Name</th>
-								<th scope="col">Username</th>
-								<th scope="col">Email</th>
-								<th scope="col">Phone</th>
-								<th scope="col">Usertype</th>
-								<th scope="col">Actions</th>
+								<th scope="col">Title</th>
+								<th scope="col">Author</th>
+								<th scope="col">Reader Name</th>
+								<th scope="col">Reader Username</th>
+								<th scope="col">Date Out</th>
+								<th scope="col">Return By</th>
 							</tr>
 						</thead>
 						<tbody>
-							{paginatedUsers.map((oneUser, idx) => {
+							{paginatedBooks.map((book, idx) => {
 								return (
-									<tr key={oneUser.id}>
-										<td>{oneUser.firstname}</td>
-										<td>{oneUser.lastname}</td>
-										<td>{oneUser.username}</td>
-										<td>{oneUser.email}</td>
-										<td>{oneUser.phonenumber}</td>
-										{parseInt(oneUser.usertypeid) === 1 ? (
-											<td>Reader</td>
-										) : (
-											<td>Admin</td>
-										)}
-										<td>
-											<Link to={`/user/${oneUser.id}`}>
-												<button className="btn btn-warning btn-sm text-secondary">
-													View
-												</button>
-											</Link>
-										</td>
+									<tr key={book.id}>
+										<td>{book.title}</td>
+										<td>{book.authorfn + " " + book.authorln}</td>
+										<td>{book.firstname + " " + book.firstname}</td>
+										<td>{book.username}</td>
+										<td>{book.dateout.split("T")[0]}</td>
+										<td>{book.returnby.split("T")[0]}</td>
 									</tr>
 								);
 							})}
@@ -145,4 +132,4 @@ const ManageUser = (props) => {
 	);
 };
 
-export default ManageUser;
+export default BorrowedBook;

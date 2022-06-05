@@ -10,10 +10,10 @@ const AdminPanel = () => {
 			<Link to={"/catalog"} style={{ textDecoration: "none" }}>
 				<h3>Manage Catalog</h3>
 			</Link>
-			<Link to={"/"} style={{ textDecoration: "none" }}>
+			<Link to={"/onloan"} style={{ textDecoration: "none" }}>
 				<h3>View Books On Loan</h3>
 			</Link>
-			<Link to={"/"} style={{ textDecoration: "none" }}>
+			<Link to={"/allorders"} style={{ textDecoration: "none" }}>
 				<h3>View Orders</h3>
 			</Link>
 			<Link to={"/manageuser"} style={{ textDecoration: "none" }}>
