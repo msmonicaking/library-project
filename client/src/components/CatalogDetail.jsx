@@ -56,6 +56,13 @@ const CatalogDetail = (props) => {
 			)
 			.catch((errs) => console.log(errs));
 	};
+
+	const handleWait = (e) => {
+		e.preventDefault();
+		alert("You will receive an email notify once the book is available!");
+		navigate("/main");
+	};
+
 	return (
 		<div
 			className="card bg-light"
@@ -83,12 +90,8 @@ const CatalogDetail = (props) => {
 						Borrow
 					</button>
 				) : (
-					<button
-						className="btn btn-success"
-						onClick={() => handleBorrow()}
-						disabled
-					>
-						Borrow
+					<button className="btn btn-success" onClick={(e) => handleWait(e)}>
+						Join Wait List
 					</button>
 				)}
 			</div>
