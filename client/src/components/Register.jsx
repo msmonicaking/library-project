@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import baseURL from "../baseURL";
 import axios from "axios";
 const Register = (props) => {
 	const setUser = props.setUser;
@@ -13,7 +14,7 @@ const Register = (props) => {
 	const handleSubmit = (e) => {
 		e.preventDefault();
 		axios
-			.post("http://localhost:8080/api/users", {
+			.post(baseURL + "users", {
 				firstname,
 				lastname,
 				username,

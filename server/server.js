@@ -511,12 +511,37 @@ app.put("/api/book/:id", async (req, res) => {
 	}
 });
 
+// get all orders for a user
+app.get("/api/orders/:id", async (req, res) => {
+	try {
+		const results = await db.query(
+			"select c.*, u.username, u.firstname, u.lastname, cat.title, a.firstname as authorfn, a.lastname as authorln FROM Checkout c JOIN Useraccount u ON c.useraccountid = u.id JOIN Book on Book.id = c.bookid JOIN Catalogcard cat ON cat.id = Book.catalogid JOIN Author a ON a.id = cat.authorid WHERE c.useraccountid = $1 ORDER BY c.isreturned;",
+			[req.params.id]
+		);
+
+		res.status(200).json({
+			status: "success",
+			data: {
+				orders: results.rows,
+			},
+		});
+	} catch (err) {
+		res.status(200).json({
+			status: "error",
+			data: {
+				error: err,
+			},
+		});
+	}
+});
+
+// get all orders for admin
 app.get("/api/allorders", async (req, res) => {
 	try {
 		const results = await db.query(
 			"select c.*, u.username, u.firstname, u.lastname, cat.title, a.firstname as authorfn, a.lastname as authorln FROM Checkout c JOIN Useraccount u ON c.useraccountid = u.id JOIN Book on Book.id = c.bookid JOIN Catalogcard cat ON cat.id = Book.catalogid JOIN Author a ON a.id = cat.authorid ORDER BY c.isreturned;"
 		);
- 
+
 		res.status(200).json({
 			status: "success",
 			data: {
@@ -581,15 +606,12 @@ app.post("/api/checkout", async (req, res) => {
 	}
 });
 
-// update a checkout
-// return book case
-app.put("/api/checkout/", async (req, res) => {
-	console.log(req.body);
-
+// update the availability of a book
+app.put("/api/return", async (req, res) => {
 	try {
 		const results = await db.query(
-			"UPDATE checkout SET isreturned = true, returndate = $2 WHERE bookid = $1",
-			[req.body.bookid, req.body.returndate]
+			"UPDATE book SET isavaiable = true WHERE id = $1",
+			[req.body.bookid]
 		);
 
 		console.log(results);
@@ -597,16 +619,45 @@ app.put("/api/checkout/", async (req, res) => {
 		res.status(201).json({
 			status: "success",
 			data: {
-				data: {
-					books: results.rows[0],
-				},
+				book: results.rows[0],
 			},
 		});
 	} catch (err) {
-		console.log(err);
+		res.status(201).json({
+			status: "error",
+			data: {
+				error: err,
+			},
+		});
 	}
+});
+// update a checkout
+// return book case
+app.put("/api/checkout", async (req, res) => {
+	console.log(req.body);
+	const returndate = new Date(Date.now());
+	try {
+		const results = await db.query(
+			"UPDATE checkout SET isreturned = true, returndate = $1 WHERE bookid = $2",
+			[returndate, req.body.bookid]
+		);
 
-	response.send("update a checkout");
+		console.log(results);
+
+		res.status(201).json({
+			status: "success",
+			data: {
+				book: results.rows[0],
+			},
+		});
+	} catch (err) {
+		res.status(201).json({
+			status: "error",
+			data: {
+				error: err,
+			},
+		});
+	}
 });
 
 //--------------------------------------------------------------

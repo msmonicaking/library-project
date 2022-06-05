@@ -30,7 +30,7 @@ const SideBar = (props) => {
 				<h3>Non Fictions</h3>
 			</Link>
 			<Link
-				to={"/nonfiction"}
+				to={"/user/orders"}
 				style={{ textDecoration: "none", color: "whitesmoke" }}
 			>
 				<h3>Order History</h3>

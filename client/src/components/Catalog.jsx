@@ -97,12 +97,12 @@ const Catalog = (props) => {
 
 	useEffect(() => {
 		axios
-			.get("http://localhost:8080/api/catalogcard")
+			.get(baseURL + "catalogcard")
 			.then((res) => {
 				const temp = res.data.data.catalogcard;
 				temp.forEach((cat) => {
 					axios
-						.get("http://localhost:8080/api/catalogcard/stock/" + cat.id)
+						.get(baseURL + "catalogcard/stock/" + cat.id)
 						.then((re) => {
 							cat.stock = parseInt(re.data.stock.stock);
 							setCatalog(temp);
@@ -119,7 +119,7 @@ const Catalog = (props) => {
 	const handleDelete = (id) => {
 		if (window.confirm("Are you sure you want delete this catalog?")) {
 			axios
-				.delete("http://localhost:8080/api/catalogcard/" + id)
+				.delete(baseURL + "catalogcard/" + id)
 				.then((res) => {
 					console.log(res);
 					const deletedAry = catalog.filter((item) => item.id !== id);

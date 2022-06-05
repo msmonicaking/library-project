@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import baseURL from "../baseURL";
 const Login = (props) => {
 	const setUser = props.setUser;
 	const navigate = useNavigate();
@@ -10,7 +11,7 @@ const Login = (props) => {
 	const handleSubmit = (e) => {
 		e.preventDefault();
 		axios
-			.get("http://localhost:8080/api/users/" + email)
+			.get(baseURL + "users/" + email)
 			.then((user) => {
 				const pw = user.data.data.user.pw;
 				if (password === pw) {

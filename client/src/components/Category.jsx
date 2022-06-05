@@ -2,13 +2,14 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Header from "./Header";
 import SideBar from "./SideBar";
+import baseURL from "../baseURL";
 const Category = (props) => {
 	const user = props.user;
 	const [cate, setCate] = useState("");
 	const [category, setCategory] = useState([]);
 	useEffect(() => {
 		axios
-			.get("http://localhost:8080/api/category")
+			.get(baseURL + "category")
 			.then((res) => {
 				setCategory(res.data.categories);
 			})
@@ -19,7 +20,7 @@ const Category = (props) => {
 	const handleAdd = (e) => {
 		e.preventDefault();
 		axios
-			.post("http://localhost:8080/api/category", {
+			.post(baseURL + "category", {
 				name: cate,
 			})
 			.then((res) => {
@@ -35,7 +36,7 @@ const Category = (props) => {
 	const handleDelete = (id) => {
 		if (window.confirm("Are you sure you want to delete this category?")) {
 			axios
-				.delete("http://localhost:8080/api/category/" + id)
+				.delete(baseURL + "category/" + id)
 				.then((res) => {
 					console.log(res);
 					const deletedAry = category.filter((item) => item.id !== id);

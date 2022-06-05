@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import baseURL from "../baseURL";
 
 const UpdateCata = (props) => {
 	const id = props.id;
@@ -17,7 +18,7 @@ const UpdateCata = (props) => {
 	const navi = useNavigate();
 	useEffect(() => {
 		axios
-			.get("http://localhost:8080/api/catalogcard")
+			.get(baseURL + "catalogcard")
 			.then((res) => {
 				const cata = res.data.data.catalogcard.filter(
 					(item) => item.id === parseInt(id)
@@ -36,7 +37,7 @@ const UpdateCata = (props) => {
 				console.log(err);
 			});
 		axios
-			.get("http://localhost:8080/api/category")
+			.get(baseURL + "category")
 			.then((res) => {
 				setCategory(res.data.categories);
 			})
@@ -49,11 +50,11 @@ const UpdateCata = (props) => {
 		// check if the author exists in DB
 		var author_id = authorid;
 		axios
-			.get(`http://localhost:8080/api/author/${FN}/${LN}`)
+			.get(`${baseURL}author/${FN}/${LN}`)
 			.then((res) => {
 				if (Object.keys(res.data.data).length === 0) {
 					axios
-						.post("http://localhost:8080/api/author", {
+						.post(baseURL + "author", {
 							firstname: FN,
 							lastname: LN,
 						})
@@ -78,7 +79,7 @@ const UpdateCata = (props) => {
 		// title, authorid, categoryid, isbn, description
 		console.log(author_id);
 		axios
-			.put("http://localhost:8080/api/catalog/" + id, {
+			.put(baseURL + "catalog/" + id, {
 				title,
 				authorid: author_id,
 				categoryid: parseInt(cate),

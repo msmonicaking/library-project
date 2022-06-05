@@ -17,6 +17,7 @@ import Fiction from "./components/Fictions";
 import NonFiction from "./components/NonFiction";
 import BorrowedBook from "./components/BorrowedBook";
 import AllOrders from "./components/AllOrders";
+import UserOrders from "./components/UserOrders";
 
 function App() {
 	const [user, setUser] = useState({});
@@ -65,6 +66,12 @@ function App() {
 				<Route
 					path="/book/:id"
 					element={<BookView user={user} setUser={setUser} />}
+				></Route>
+
+				{/* View Order History */}
+				<Route
+					path="/user/orders"
+					element={<UserOrders user={user} setUser={setUser} />}
 				></Route>
 
 				{/* Admin Section */}
