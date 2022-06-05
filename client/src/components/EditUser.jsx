@@ -12,6 +12,7 @@ const EditUser = (props) => {
 	const [lastname, setLastname] = useState("");
 	const [email, setEmail] = useState("");
 	const [phone, setPhone] = useState("");
+	const [orders, setOrders] = useState([]);
 	useEffect(() => {
 		axios
 			.get(baseURL + "users/id/" + id)
@@ -27,18 +28,48 @@ const EditUser = (props) => {
 			.catch((err) => console.log(err));
 	}, [id]);
 
+	useEffect(() => {
+		axios
+			.get(baseURL + "unreturnedorders/" + id)
+			.then((res) => {
+				const temp = res.data.data.orders;
+				setOrders(temp);
+			})
+			.catch((err) => console.log(err));
+	}, [id]);
+
 	const handleDelete = (e) => {
-    e.preventDefault();
+		e.preventDefault();
 		if (window.confirm("Are you sure you want to delete this account?")) {
-			axios.put(`${baseURL}users/deleted/${id}`).then((res) => {
-				console.log(res);
-				if (currentUser === id) {
-					props.setUser({});
-					navigate("/");
-				} else {
-					navigate('/manageuser');
-				}
+			let promises = [];
+			orders.forEach((order) => {
+				promises.push(
+					axios.put(baseURL + "return", {
+						bookid: order.bookid,
+					})
+				);
 			});
+			Promise.all(promises)
+				.then((re) => {
+					axios
+						.put(baseURL + "checkout/" + id)
+						.then((res) => {
+							axios
+								.put(`${baseURL}users/deleted/${id}`)
+								.then((res) => {
+									console.log(res);
+									if (currentUser === id) {
+										props.setUser({});
+										navigate("/");
+									} else {
+										navigate("/manageuser");
+									}
+								})
+								.catch((err) => console.log(err));
+						})
+						.catch((err) => console.log(err));
+				})
+				.catch((err) => console.log(err));
 		}
 	};
 	const handleSubmit = (e) => {

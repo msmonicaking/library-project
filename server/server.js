@@ -511,6 +511,29 @@ app.put("/api/book/:id", async (req, res) => {
 	}
 });
 
+// get all unreturnedorders for a user
+app.get("/api/unreturnedorders/:id", async (req, res) => {
+	try {
+		const results = await db.query(
+			"select c.*, u.username, u.firstname, u.lastname, cat.title, a.firstname as authorfn, a.lastname as authorln FROM Checkout c JOIN Useraccount u ON c.useraccountid = u.id JOIN Book on Book.id = c.bookid JOIN Catalogcard cat ON cat.id = Book.catalogid JOIN Author a ON a.id = cat.authorid WHERE c.useraccountid = $1 AND c.isreturned = false;",
+			[req.params.id]
+		);
+
+		res.status(200).json({
+			status: "success",
+			data: {
+				orders: results.rows,
+			},
+		});
+	} catch (err) {
+		res.status(200).json({
+			status: "error",
+			data: {
+				error: err,
+			},
+		});
+	}
+});
 // get all orders for a user
 app.get("/api/orders/:id", async (req, res) => {
 	try {
@@ -631,6 +654,32 @@ app.put("/api/return", async (req, res) => {
 		});
 	}
 });
+
+// update all orders of a user as returned, used when delete user
+app.put("/api/checkout/:id", async (req, res) => {
+	console.log(req.body);
+	const returndate = new Date(Date.now());
+	try {
+		const results = await db.query(
+			"UPDATE checkout SET isreturned = true, returndate = $1 WHERE useraccountid = $2",
+			[returndate, req.params.id]
+		);
+		res.status(201).json({
+			status: "success",
+			data: {
+				book: results.rows[0],
+			},
+		});
+	} catch (err) {
+		res.status(201).json({
+			status: "error",
+			data: {
+				error: err,
+			},
+		});
+	}
+});
+
 // update a checkout
 // return book case
 app.put("/api/checkout", async (req, res) => {

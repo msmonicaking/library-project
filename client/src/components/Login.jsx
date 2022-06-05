@@ -13,18 +13,22 @@ const Login = (props) => {
 		axios
 			.get(baseURL + "users/" + email)
 			.then((user) => {
-				const pw = user.data.data.user.pw;
-				if (password === pw) {
-					setUser({
-						userid: user.data.data.user.id,
-						username: user.data.data.user.username,
-						usertype: user.data.data.user.usertypeid
-					});
-					navigate("/main");
+				if (Object.keys(user.data.data).length === 0) {
+					alert("Email does not exist!");
 				} else {
-					setEmail("");
-					setPassword("");
-					window.alert("Your account does not match the password!");
+					const pw = user.data.data.user.pw;
+					if (password === pw) {
+						setUser({
+							userid: user.data.data.user.id,
+							username: user.data.data.user.username,
+							usertype: user.data.data.user.usertypeid,
+						});
+						navigate("/main");
+					} else {
+						setEmail("");
+						setPassword("");
+						window.alert("Your account does not match the password!");
+					}
 				}
 			})
 			.catch((err) => console.log(err));
@@ -73,8 +77,6 @@ const Login = (props) => {
 				</form>
 				<br></br>
 				<Link to={"/register"}>Click here to register!</Link>
-				<br />
-				<Link to={"/main"}>To main page(for testing only)</Link>
 			</div>
 		</div>
 	);
